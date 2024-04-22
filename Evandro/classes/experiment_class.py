@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 @dataclass
 class SynchronizedExperiment:
     experiment_name: str

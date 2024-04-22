@@ -1,6 +1,6 @@
 import flet as ft
-import interface_synchronization as i_sc
 
+from Evandro.interface import interface_synchronization as i_sc
 
 def __create_tabs__(LinhaPrincipal, page):
     if LinhaPrincipal.controls[2] is not None:

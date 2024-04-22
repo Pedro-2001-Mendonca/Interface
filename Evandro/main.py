@@ -2,8 +2,9 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import flet as ft
-import NewInterface_TD as niTD
-import Tabs as tbs
+import interface.NewInterface_TD as niTD
+import auxiliar.Tabs as tbs
+
 
 Base = declarative_base()
 
