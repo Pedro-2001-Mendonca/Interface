@@ -57,7 +57,8 @@ def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_po
         poly_temperature,
         poly_y,
         f_out,
-        concentration)
+        concentration,
+        ns_class.c_in)
 
     return sClass
 

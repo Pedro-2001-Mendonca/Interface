@@ -5,7 +5,7 @@ import pandas as pd
 import math
 from Evandro.classes import experiment_class as ec
 from Evandro.auxiliar import synchronization as sync
-
+from Evandro.db import db_experiment as db
 
 def main(page, tab_name):
 
@@ -21,7 +21,9 @@ def main(page, tab_name):
     seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
     fp = ft.ElevatedButton("Carregar arquivo", on_click=seleciona_arquivo_dialog.pick_files)
 
-    principal.controls.insert(1, fp)
+    linha1 = ft.Row(alignment=ft.MainAxisAlignment.CENTER,)
+    linha1.controls.insert(0, fp)
+    principal.controls.insert(1, linha1)
     principal.controls.insert(2, ft.Column(controls=None))
 
     vetorQ = []
@@ -65,6 +67,7 @@ def main(page, tab_name):
             1,
             500,
             298.15,
+            0.6,
             0.0383,
             0.1921,
             0.0211,
@@ -76,7 +79,9 @@ def main(page, tab_name):
             vetoryCH4,
             "K",
             "bar",
-            "L/min"
+            "L/min",
+            5,
+            0.6
         )
 
         sync_experiment = sync.synchronize(
@@ -84,7 +89,7 @@ def main(page, tab_name):
             not_synchronized_experiment.time_y_column[0],
             19,
             #not_synchronized_experiment.time_y_column[len(not_synchronized_experiment.time_y_column) - 1],
-            200
+            100
         )
 
 
@@ -160,6 +165,10 @@ def main(page, tab_name):
 
         #workbook.close()
 
+        def __salvar__():
+            db.__create_db_ns_experiment__(tab_name, not_synchronized_experiment)
+        salvar = ft.ElevatedButton("Salvar", on_click=__salvar__())
+        linha1.controls.insert(1, salvar)
         principal.controls.insert(2, vetorCol)
 
         page.update()

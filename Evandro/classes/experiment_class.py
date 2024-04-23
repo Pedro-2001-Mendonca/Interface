@@ -21,6 +21,7 @@ class SynchronizedExperiment:
     poly_y: []
     f_out_column: []
     c_out_column: []
+    c_in: float
 
 
     def __init__(self,
@@ -42,7 +43,8 @@ class SynchronizedExperiment:
                  poly_temperature: [],
                  poly_y: [],
                  f_out_column: [],
-                 c_out_column: []):
+                 c_out_column: [],
+                 c_in: float):
         self.experiment_name = experiment_name
         self.inlet_pressure = inlet_pressure
         self.inlet_flow = inlet_flow
@@ -62,6 +64,7 @@ class SynchronizedExperiment:
         self.poly_y = poly_y
         self.f_out_column = f_out_column
         self.c_out_column = c_out_column
+        self.c_in = c_in
 
 
 @dataclass
@@ -70,6 +73,7 @@ class NotSynchronizedExperiment:
     inlet_pressure: float
     inlet_flow: float
     inlet_temperature: float
+    inlet_y: float
     adsorbent_mass: float
     bed_length: float
     bed_diameter: float
@@ -82,12 +86,15 @@ class NotSynchronizedExperiment:
     temperature_unit: str
     pressure_unit: str
     flow_unit: str
+    c_in: float
+    porosity: float
 
     def __init__(self,
                  experiment_name: str,
                  inlet_pressure: float,
                  inlet_flow: float,
                  inlet_temperature: float,
+                 inlet_y: float,
                  adsorbent_mass: float,
                  bed_length: float,
                  bed_diameter: float,
@@ -99,11 +106,14 @@ class NotSynchronizedExperiment:
                  y_column: [],
                  temperature_unit: str,
                  pressure_unit: str,
-                 flow_unit: str,):
+                 flow_unit: str,
+                 c_in: float,
+                 porosity: float):
         self.experiment_name = experiment_name
         self.inlet_pressure = inlet_pressure
         self.inlet_flow = inlet_flow
         self.inlet_temperature = inlet_temperature
+        self.inlet_y = inlet_y
         self.adsorbent_mass = adsorbent_mass
         self.bed_length = bed_length
         self.bed_diameter = bed_diameter
@@ -116,5 +126,6 @@ class NotSynchronizedExperiment:
         self.temperature_unit = temperature_unit
         self.pressure_unit = pressure_unit
         self.flow_unit = flow_unit
-
+        self.c_in = c_in
+        self.porosity = porosity
 
