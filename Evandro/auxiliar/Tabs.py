@@ -27,10 +27,11 @@ def __create_tabs__(LinhaPrincipal, page):
 
 def __add_tabs__(tabs, page,):
     column = ft.Column(controls=None, alignment=ft.MainAxisAlignment.START, expand=True)
+    tab_name = "Experimento " + str(len(tabs.tabs) + 1)
     tab = ft.Tab(
-        text="Experimento " + str(len(tabs.tabs) + 1),
+        text=tab_name,
         content=ft.Container(
-                    content=i_sc.main(page), alignment=ft.alignment.center
+                    content=i_sc.main(page, tab_name), alignment=ft.alignment.center
                 ),
     )
 

@@ -18,9 +18,21 @@ def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_po
     flow_qls = []
 
     for i in range(len(new_time)):
-        new_temperature.append(poly_temperature[get_position(new_time[i], ns_class.time_temperature_column)](new_time[i]))
-        new_flow.append(poly_flow[get_position(new_time[i], ns_class.time_flow_column)](new_time[i]))
-        new_y.append(poly_y[get_position(new_time[i], ns_class.y_column)])
+        if get_position(new_time[i], ns_class.time_temperature_column) < len(poly_y):
+            new_temperature.append(poly_temperature[get_position(new_time[i], ns_class.time_temperature_column)](new_time[i]))
+        else:
+            new_temperature.append(poly_temperature[len(poly_temperature)-1](new_time[i]))
+
+        if get_position(new_time[i], ns_class.time_flow_column) < len(poly_flow):
+            new_flow.append(poly_flow[get_position(new_time[i], ns_class.time_flow_column)](new_time[i]))
+        else:
+            new_flow.append(poly_flow[len(poly_y)-1](new_time[i]))
+
+        if get_position(new_time[i], ns_class.time_y_column) < len(poly_y):
+            new_y.append(poly_y[get_position(new_time[i], ns_class.time_y_column)](new_time[i]))
+        else:
+            new_y.append(poly_y[len(poly_y)-1](new_time[i]))
+
         flow_qls.append(new_flow[i] / (60 * 1000))
         concentration.append(new_y[i] * 0.9869 / (
                 (new_temperature[i] + 273.15) * 0.082057))  # Pressão = 0.98, Constante dos gases ideais =0.082057
