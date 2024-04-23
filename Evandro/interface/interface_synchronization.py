@@ -132,7 +132,7 @@ def main(page, tab_name):
                            (sync_experiment.time_column[i] - sync_experiment.time_column[i - 1]))
 
         print("Integral FoutCH4 = " + str(intFoutCH4))
-        print("Integral FoutCO2 = " + str(intFoutCO2))
+        #print("Integral FoutCO2 = " + str(intFoutCO2))
 
         Gascte = 0.08314462
         Lbed = 0.1921
@@ -149,9 +149,9 @@ def main(page, tab_name):
         qco2 = (CinCO2 * Qin * 60 * (
                 vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - intFoutCO2 - CinCO2 * Vbed * epsilonL) / mads
         print("qCH4 = " + str(qch4))
-        print("qCO2 = " + str(qco2))
-        print((CinCH4 * Qin * 60 * (
-                    vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - 0.20061 - CinCH4 * Vbed * epsilonL) / mads)
+        #print("qCO2 = " + str(qco2))
+        #print((CinCH4 * Qin * 60 * (
+         #           vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - 0.20061 - CinCH4 * Vbed * epsilonL) / mads)
         #workbook = xlsxwriter.Workbook('dados_tratados.xlsx')
         #worksheet = workbook.add_worksheet()
 
@@ -167,7 +167,8 @@ def main(page, tab_name):
 
         def __salvar__():
             db.__create_db_ns_experiment__(tab_name, not_synchronized_experiment)
-        salvar = ft.ElevatedButton("Salvar", on_click=__salvar__())
+            print('salvou')
+        salvar = ft.ElevatedButton("Salvar", on_click=lambda _: __salvar__())
         linha1.controls.insert(1, salvar)
         principal.controls.insert(2, vetorCol)
 
