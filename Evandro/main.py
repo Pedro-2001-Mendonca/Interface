@@ -2,18 +2,14 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import flet as ft
-import interface.NewInterface_TD as niTD
 import auxiliar.Tabs as tbs
-
-
+from interface import interface_synchronization as ints
 Base = declarative_base()
-
-
 def __change_page__(index, LinhaPrincipal, page):
     if index == 0:
         tbs.__create_tabs__(LinhaPrincipal, page)
-    if index == 1:
-        niTD.main(LinhaPrincipal, page)
+    #if index == 1:
+        #ints.main(LinhaPrincipal, page)
 
 
 def main(page: ft.Page):
@@ -24,7 +20,6 @@ def main(page: ft.Page):
         if e.files is not None:
             for f in e.files:
                 arquivo = f.path
-        print(arquivo)
 
     seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
     page.update()

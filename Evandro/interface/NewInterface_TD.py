@@ -140,9 +140,9 @@ def main(LinhaPrincipal, page):
         qco2 = (CinCO2 * Qin * 60 * (
                 vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - intFoutCO2 - CinCO2 * Vbed * epsilonL) / mads
         print("qCH4 = " + str(qch4))
-        print("qCO2 = " + str(qco2))
-        print((CinCH4 * Qin * 60 * (
-                    vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - 0.20061 - CinCH4 * Vbed * epsilonL) / mads)
+        #print("qCO2 = " + str(qco2))
+        #print((CinCH4 * Qin * 60 * (
+                 #   vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - 0.20061 - CinCH4 * Vbed * epsilonL) / mads)
         workbook = xlsxwriter.Workbook('dados_tratados.xlsx')
         worksheet = workbook.add_worksheet()
 
