@@ -5,7 +5,7 @@ import math
 import matplotlib.pyplot as plt
 from flet.matplotlib_chart import MatplotlibChart
 matplotlib.use("svg")
-import Interpolation as itp
+from Evandro.auxiliar import synchronization as itp
 import xlsxwriter
 
 
@@ -220,9 +220,13 @@ def main(page: ft.Page):
         worksheet = workbook.add_worksheet()
 
         figura = plt.plot(vetorTempoy, vetornewT, 'k-o')
+        plt.close()
         figura2 = plt.plot(vetorTempoy, vetornewQ, 'r-o')
+        plt.close()
         figura3 = plt.plot(vetorTempoy, vetoryCH4, 'g-o')
+        plt.close()
         figura4 = plt.plot(vetorTempoy, vetoryCO2, 'b-o')
+        plt.close()
 
         grafico = MatplotlibChart(figura[0].figure)
         grafico2 = MatplotlibChart(figura2[0].figure)
@@ -243,7 +247,10 @@ def main(page: ft.Page):
 
         principal.controls = vetorCol
         page.controls.insert(len(page.controls)+1, principal)
-        principal.controls.extend([fig_container, fig_container2, fig_container3, fig_container4])
+        principal.controls.append(fig_container)
+        principal.controls.append(fig_container2)
+        principal.controls.append(fig_container3)
+        principal.controls.append(fig_container4)
         page.update()
 
 
