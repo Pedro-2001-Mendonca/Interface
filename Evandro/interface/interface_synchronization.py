@@ -1,11 +1,13 @@
-from Evandro.auxiliar import Interpolation as itp
+
 import xlsxwriter
 import flet as ft
 import pandas as pd
 import math
+from Evandro.classes import experiment_class as ec
+from Evandro.auxiliar import synchronization as sync
+from Evandro.db import db_experiment as db
 
-
-def main(page):
+def main(page, tab_name):
 
     principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, expand=True, spacing=25)
     principal.controls.insert(0, ft.Container(content=None, height=0, width=120))
@@ -19,7 +21,9 @@ def main(page):
     seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
     fp = ft.ElevatedButton("Carregar arquivo", on_click=seleciona_arquivo_dialog.pick_files)
 
-    principal.controls.insert(1, fp)
+    linha1 = ft.Row(alignment=ft.MainAxisAlignment.CENTER,)
+    linha1.controls.insert(0, fp)
+    principal.controls.insert(1, linha1)
     principal.controls.insert(2, ft.Column(controls=None))
 
     vetorQ = []
@@ -58,95 +62,113 @@ def main(page):
                 elif col == 'yCO2' and value >= 0:
                     vetoryCO2.append(value)
 
-        polinomiosT = itp.interpolation(vetorTempoT, vetorT)
+        not_synchronized_experiment = ec.NotSynchronizedExperiment(
+            "tab_name",
+            1,
+            500,
+            298.15,
+            0.6,
+            0.0383,
+            0.1921,
+            0.0211,
+            vetorTempoy,
+            vetorTempoT,
+            vetorTempoQ,
+            vetorT,
+            vetorQ,
+            vetoryCH4,
+            "K",
+            "bar",
+            "L/min",
+            5,
+            0.6
+        )
 
-        polinomiosQ = itp.interpolation(vetorTempoQ, vetorQ)
+        sync_experiment = sync.synchronize(
+            not_synchronized_experiment,
+            not_synchronized_experiment.time_y_column[0],
+            19,
+            #not_synchronized_experiment.time_y_column[len(not_synchronized_experiment.time_y_column) - 1],
+            100
+        )
 
-        vetornewT = []
-        vetornewQ = []
-        vetorQLs = []
-        vetorConcCH4 = []
-        vetorConcCO2 = []
-        vetorFoutCH4 = []
-        vetorFoutCO2 = []
-
-        for i in range(len(vetorTempoy)):
-            vetornewT.append(polinomiosT[itp.get_position(vetorTempoy[i], vetorTempoT)](vetorTempoy[i]))
-
-        for i in range(len(vetorTempoy)):
-            vetornewQ.append(polinomiosQ[itp.get_position(vetorTempoy[i], vetorTempoQ)](vetorTempoy[i]))
-            vetorQLs.append(vetornewQ[i] / (60 * 1000))
-            vetorConcCH4.append(vetoryCH4[i] * 0.9869 / (
-                        (vetornewT[i] + 273.15) * 0.082057))  # Pressão = 0.98, Constante dos gases ideais =0.082057
-            vetorConcCO2.append(vetoryCO2[i] * 0.9869 / (
-                    (vetornewT[i] + 273.15) * 0.082057459))  # Pressão = 0.98, Constante dos gases ideais =0.082057
-            vetorFoutCH4.append(vetorConcCH4[i] * vetorQLs[i])
-            vetorFoutCO2.append(vetorConcCO2[i] * vetorQLs[i])
 
         vetorCol = ft.Column(controls=None)
         vetorCol.controls.clear()
         vetorCol_Export = []
-        for i in range(len(vetorTempoy)):
+        for i in range(len(sync_experiment.time_column)):
             vetorLinha = []
             vetorLinha_Export = []
             vetorLinha.append(
-                ft.Container(content=ft.TextField(vetorTempoy[i], width=100, text_align=ft.TextAlign.CENTER)))
+                ft.Container(content=ft.TextField(sync_experiment.time_column[i],
+                                                  width=100, text_align=ft.TextAlign.CENTER)))
             vetorLinha.append(
-                ft.Container(content=ft.TextField(vetornewT[i], width=100, text_align=ft.TextAlign.CENTER)))
+                ft.Container(content=ft.TextField(sync_experiment.temperature_column[i],
+                                                  width=100, text_align=ft.TextAlign.CENTER)))
             vetorLinha.append(
-                ft.Container(content=ft.TextField(vetornewQ[i], width=100, text_align=ft.TextAlign.CENTER)))
+                ft.Container(content=ft.TextField(sync_experiment.flow_column[i],
+                                                  width=100, text_align=ft.TextAlign.CENTER)))
             vetorLinha.append(
-                ft.Container(content=ft.TextField(vetoryCH4[i], width=100, text_align=ft.TextAlign.CENTER)))
+                ft.Container(content=ft.TextField(sync_experiment.y_column[i],
+                                                  width=100, text_align=ft.TextAlign.CENTER)))
             vetorLinha.append(
-                ft.Container(content=ft.TextField(vetoryCO2[i], width=100, text_align=ft.TextAlign.CENTER)))
-            vetorLinha_Export.append(vetorTempoy[i])
-            vetorLinha_Export.append(vetornewT[i])
-            vetorLinha_Export.append(vetornewQ[i])
-            vetorLinha_Export.append(vetoryCH4[i])
-            vetorLinha_Export.append(vetoryCO2[i])
+                ft.Container(content=ft.TextField(sync_experiment.y_column[i],
+                                                  width=100, text_align=ft.TextAlign.CENTER)))
+            vetorLinha_Export.append(sync_experiment.time_column[i])
+            vetorLinha_Export.append(sync_experiment.temperature_column[i])
+            vetorLinha_Export.append(sync_experiment.flow_column[i])
+            vetorLinha_Export.append(sync_experiment.y_column[i])
+            vetorLinha_Export.append(sync_experiment.y_column[i])
 
             vetorCol.controls.insert(i, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
             vetorCol_Export.append(vetorLinha_Export)
 
         intFoutCH4 = 0
         intFoutCO2 = 0
-        for i in range(1, len(vetorTempoy)):
-            intFoutCH4 += ((vetorFoutCH4[i] + vetorFoutCH4[i - 1]) / 2) * 60 * (vetorTempoy[i] - vetorTempoy[i - 1])
-            intFoutCO2 += ((vetorFoutCO2[i] + vetorFoutCO2[i - 1]) / 2) * 60 * (vetorTempoy[i] - vetorTempoy[i - 1])
+        for i in range(1, len(sync_experiment.time_column)):
+            intFoutCH4 += (((sync_experiment.f_out_column[i] + sync_experiment.f_out_column[i - 1]) / 2) * 60 *
+                           (sync_experiment.time_column[i] - sync_experiment.time_column[i - 1]))
+            intFoutCO2 += (((sync_experiment.f_out_column[i] + sync_experiment.f_out_column[i - 1]) / 2) * 60 *
+                           (sync_experiment.time_column[i] - sync_experiment.time_column[i - 1]))
 
         print("Integral FoutCH4 = " + str(intFoutCH4))
         print("Integral FoutCO2 = " + str(intFoutCO2))
+
         Gascte = 0.08314462
         Lbed = 0.1921
         dbed = 0.0211
         Vbed = 1000 * (dbed ** 2) * Lbed * 0.25 * math.pi
         epsilonL = 0.5671
         mads = 0.0383
-        Qin = 0.5 / (60)  # L/s
+        Qin = 0.5 / 60  # L/s
         Tin = 298.15
         CinCH4 = 1 * 0.6 / (Gascte * Tin)  # mol/L
         CinCO2 = 1 * 0.4 / (Gascte * Tin)  # mol/L
         qch4 = (CinCH4 * Qin * 60 * (
-                    vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - intFoutCH4 - CinCH4 * Vbed * epsilonL) / mads
+                    sync_experiment.time_column[len(sync_experiment.time_column) - 1] - sync_experiment.time_column[0]) - intFoutCH4 - CinCH4 * Vbed * epsilonL) / mads
         qco2 = (CinCO2 * Qin * 60 * (
                 vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - intFoutCO2 - CinCO2 * Vbed * epsilonL) / mads
         print("qCH4 = " + str(qch4))
         print("qCO2 = " + str(qco2))
         print((CinCH4 * Qin * 60 * (
                     vetorTempoy[len(vetorTempoy) - 1] - vetorTempoy[0]) - 0.20061 - CinCH4 * Vbed * epsilonL) / mads)
-        workbook = xlsxwriter.Workbook('dados_tratados.xlsx')
-        worksheet = workbook.add_worksheet()
+        #workbook = xlsxwriter.Workbook('dados_tratados.xlsx')
+        #worksheet = workbook.add_worksheet()
 
         row = 0
 
-        for col, data in enumerate(vetorCol_Export):
-            worksheet.write_column(row, col, data)
+        #for col, data in enumerate(vetorCol_Export):
+           # worksheet.write_column(row, col, data)
 
         nCols = 5
         principal.width = 150 * nCols
 
-        workbook.close()
+        #workbook.close()
 
+        def __salvar__():
+            db.__create_db_ns_experiment__(tab_name, not_synchronized_experiment)
+        salvar = ft.ElevatedButton("Salvar", on_click=__salvar__())
+        linha1.controls.insert(1, salvar)
         principal.controls.insert(2, vetorCol)
 
         page.update()

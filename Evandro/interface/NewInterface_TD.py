@@ -6,9 +6,9 @@ import math
 import openpyxl
 import matplotlib.pyplot as plt
 from flet.matplotlib_chart import MatplotlibChart
+from Evandro.auxiliar import synchronization as sync
+from Evandro.classes import experiment_class as ec
 
-matplotlib.use("svg")
-from Evandro.auxiliar import Interpolation as itp
 import xlsxwriter
 
 
@@ -67,9 +67,9 @@ def main(LinhaPrincipal, page):
                 elif col == 'yCO2' and value >= 0:
                     vetoryCO2.append(value)
 
-        polinomiosT = itp.interpolation(vetorTempoT, vetorT)
+        not_sync_exp = ec.NotSynchronizedExperiment(
 
-        polinomiosQ = itp.interpolation(vetorTempoQ, vetorQ)
+        )
 
         vetornewT = []
         vetornewQ = []
