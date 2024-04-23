@@ -26,20 +26,21 @@ def main(page: ft.Page):
 
     # INPUTS
     vetor_inputs = []
-    inputL_bed = ft.TextField(label="L_bed")
-    inputD_bed = ft.TextField(label="D_bed")
-    inputM_ads = ft.TextField(label="M_ads")
+    inputL_bed = ft.TextField(label="L_bed", suffix_text="(m)")
+    inputD_bed = ft.TextField(label="D_bed", suffix_text="(m²)")
+    inputM_ads = ft.TextField(label="M_ads", suffix_text= "(Kg)")
     inputQ_in = ft.TextField(label="Q_in")
-    inputT_in = ft.TextField(label="T_in")
+    inputT_in = ft.TextField(label="T_in", suffix_text="(K)")
     inputPorosidade = ft.TextField(label="Porosidade")
     inputYch4In = ft.TextField(label="Ych4In")
     inputYcho2In = ft.TextField(label="Ycho2In")
-    inputPin = ft.TextField(label="P_in")
+    inputPin = ft.TextField(label="P_in", suffix_text="(Bar)")
 
     row_inputs_volume = ft.Row()
     row_inputs_resto = ft.Row()
+    col_inputs = ft.Column(spacing=0)
 
-
+    divisor = ft.Divider(thickness=5, height=15)
 
     page.add(principal, row_inputs_volume, row_inputs_resto)
 
@@ -66,6 +67,7 @@ def main(page: ft.Page):
         for i in range(len(vetor_inputs)):
             vetor_inputs[i].width = 130
             vetor_inputs[i].text_size = 10
+            vetor_inputs[i].text_align = ft.TextAlign.CENTER
         #     row_inputs.controls.append(vetorInputs[i])
 
         for i in range(len(vetor_inputs)):
@@ -83,6 +85,10 @@ def main(page: ft.Page):
 
     def calcula_volume_bed(e):
 
+        if len(row_inputs_volume.controls) > 3:
+            row_inputs_volume.controls.pop(2)
+            page.update()
+
         def close_dlg_volume(e):
             dlg_erro_volume.open = False
             page.update()
@@ -95,12 +101,18 @@ def main(page: ft.Page):
                 ft.TextButton("Ok", on_click=close_dlg_volume)
             ])
 
-        if inputL_bed.value.isdigit() and inputD_bed.value.isdigit():
+        if not inputL_bed.value.isalpha() and not inputD_bed.value.isalpha() and not inputL_bed.value == '' and not inputD_bed.value == '':
             L_bed = float(inputL_bed.value)
             D_bed = float(inputD_bed.value)
 
-            V_bed = L_bed * D_bed
-            print(V_bed)
+            V_bed = round(L_bed * D_bed, 3)
+
+            resultadoV_bed = ft.TextField(value=str(V_bed), width=130, text_align=ft.TextAlign.CENTER,
+                                              label="Volume do Leito", suffix_text="m³")
+
+            row_inputs_volume.controls.insert(2, resultadoV_bed)
+            page.update()
+
         else:
             page.dialog = dlg_erro_volume
             dlg_erro_volume.open = True
@@ -217,12 +229,10 @@ def main(page: ft.Page):
         grafico3 = MatplotlibChart(figura3[0].figure)
         grafico4 = MatplotlibChart(figura4[0].figure)
 
-
         fig_container = ft.Container(content=grafico, width=600, height=600, alignment=ft.alignment.center)
         fig_container2 = ft.Container(content=grafico2, width=600, height=600)
         fig_container3 = ft.Container(content=grafico3, width=600, height=600)
         fig_container4 = ft.Container(content=grafico4, width=600, height=600)
-
 
         row = 0
 
