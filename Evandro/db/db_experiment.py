@@ -14,9 +14,6 @@ def __create_db_ns_experiment__(db_name, ns_exp):
         new_cursor.execute("DROP TABLE if exists temperature")
         new_cursor.execute("DROP TABLE if exists flow")
         new_cursor.execute("DROP TABLE if exists y")
-        new_cursor.execute("DROP TABLE if exists inlet_temperature")
-        new_cursor.execute("DROP TABLE if exists inlet_flow")
-        new_cursor.execute("DROP TABLE if exists inlet_y")
 
         new_cursor.execute("CREATE TABLE temperature (temperature_t float, temperature float)")
         new_cursor.execute("CREATE TABLE flow (flow_t float, flow float)")
@@ -57,9 +54,6 @@ def __create_db_ns_experiment__(db_name, ns_exp):
                            "," + str(ns_exp.c_in) +
                            ")")
 
-
-
-
     except:
         return print("Erro no banco de dados!!")
     else:
@@ -67,6 +61,3 @@ def __create_db_ns_experiment__(db_name, ns_exp):
     finally:
         new_db.close()
 
-
-
-#__create_db_ns_experiment__('bancoTeste', [0,1,2,3,4,5], [0,1,2,3,4,5], [0,1,2,3,4,5], [0,1,2,3,4,5], [0,1,2,3,4,5], [0,1,2,3,4,5])

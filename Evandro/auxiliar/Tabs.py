@@ -26,17 +26,18 @@ def __create_tabs__(LinhaPrincipal, page):
 
 
 def __add_tabs__(tabs, page,):
+    index = tabs.selected_index
     column = ft.Column(controls=None, alignment=ft.MainAxisAlignment.START, expand=True)
     tab_name = "Experimento " + str(len(tabs.tabs) + 1)
     tab = ft.Tab(
         text=tab_name,
         content=ft.Container(
-                    content=i_sc.main(page, tab_name), alignment=ft.alignment.center
+                    content=i_sc.main(page, tab_name), alignment=ft.alignment.top_left
                 ),
     )
 
     tabs.tabs.append(tab)
-    page.update()
+    tabs.update()
 
 
 def __remove_tabs__(tabs, index, page):

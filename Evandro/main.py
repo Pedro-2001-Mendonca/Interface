@@ -56,7 +56,7 @@ def main(page: ft.Page):
         ft.VerticalDivider(width=1),
         ft.Column(controls=None, alignment=ft.MainAxisAlignment.START)
     ],
-        expand=True,
+        expand=True, spacing=20
     )
 
     page.add(LinhaPrincipal)
