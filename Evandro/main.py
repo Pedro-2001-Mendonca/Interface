@@ -22,6 +22,7 @@ def __seleciona_arquivo__(e: ft.FilePickerResultEvent):
 
 
 def main(page: ft.Page):
+    page.theme_mode = ft.ThemeMode.LIGHT
     LinhaPrincipal = ft.Row(controls=None, vertical_alignment=ft.CrossAxisAlignment.START)
     page.add(LinhaPrincipal)
 
