@@ -6,6 +6,7 @@ class SynchronizedExperiment:
     inlet_pressure: float
     inlet_flow: float
     inlet_temperature: float
+    inlet_y: float
     adsorbent_mass: float
     bed_length: float
     bed_diameter: float
@@ -21,7 +22,7 @@ class SynchronizedExperiment:
     poly_y: []
     f_out_column: []
     c_out_column: []
-    c_in: float
+    porosity: float
 
 
     def __init__(self,
@@ -29,6 +30,7 @@ class SynchronizedExperiment:
                  inlet_pressure: float,
                  inlet_flow: float,
                  inlet_temperature: float,
+                 inlet_y: float,
                  adsorbent_mass: float,
                  bed_length: float,
                  bed_diameter: float,
@@ -44,11 +46,12 @@ class SynchronizedExperiment:
                  poly_y: [],
                  f_out_column: [],
                  c_out_column: [],
-                 c_in: float):
+                 porosity: float):
         self.experiment_name = experiment_name
         self.inlet_pressure = inlet_pressure
         self.inlet_flow = inlet_flow
         self.inlet_temperature = inlet_temperature
+        self.inlet_y = inlet_y
         self.adsorbent_mass = adsorbent_mass
         self.bed_length = bed_length
         self.bed_diameter = bed_diameter
@@ -64,7 +67,7 @@ class SynchronizedExperiment:
         self.poly_y = poly_y
         self.f_out_column = f_out_column
         self.c_out_column = c_out_column
-        self.c_in = c_in
+        self.porosity = porosity
 
 
 @dataclass

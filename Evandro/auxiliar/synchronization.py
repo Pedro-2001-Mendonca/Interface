@@ -43,6 +43,7 @@ def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_po
         ns_class.inlet_pressure,
         ns_class.inlet_flow,
         ns_class.inlet_temperature,
+        ns_class.inlet_y,
         ns_class.adsorbent_mass,
         ns_class.bed_length,
         ns_class.bed_diameter,
@@ -58,7 +59,7 @@ def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_po
         poly_y,
         f_out,
         concentration,
-        ns_class.c_in)
+        ns_class.porosity)
 
     return sClass
 
