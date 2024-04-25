@@ -14,75 +14,73 @@ input_height = 50
 input_cursor_height = 25
 input_width = 250
 
+# inputs do leito
+inputP_in = ft.TextField(label="Pressão", suffix_text="(bar)", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+inputL_bed = ft.TextField(label="Comprimento", suffix_text="(m)", height=input_height,
+                          cursor_height=input_cursor_height, width=input_width)
+inputD_bed = ft.TextField(label="Diâmetro", suffix_text="(m)", height=input_height,
+                          cursor_height=input_cursor_height, width=input_width)
+label_row = ft.Row(controls=[ft.Text("Propriedades do Leito")], spacing=25)
+row_input_leito = ft.Row(controls=[inputL_bed, inputD_bed], spacing=25)
+container_espaco = ft.Container(content=None, height=10)
+column_input_leito = ft.Column(controls=[container_espaco, label_row, row_input_leito], spacing=5)
+container_leito = ft.Container(content=column_input_leito)
+inputL_bed.value = "0.1921"
+inputD_bed.value = "0.0211"
+
+# inputs adsorvente
+inputM_ads = ft.TextField(label="Massa", suffix_text="(kg)", height=input_height, cursor_height=input_cursor_height,
+                          width=input_width)
+inputPorosidade = ft.TextField(label="Porosidade", height=input_height, cursor_height=input_cursor_height,
+                               width=input_width)
+label_row_ads = ft.Row(controls=[ft.Text("Propriedades do Adsorvente")], spacing=25)
+row_input_ads = ft.Row(controls=[inputM_ads, inputPorosidade], spacing=25)
+column_input_ads = ft.Column(controls=[label_row_ads, row_input_ads], spacing=5)
+container_ads = ft.Container(content=column_input_ads)
+inputM_ads.value = "0.0383"
+inputPorosidade.value = "0.5671"
+
+# inputs_entrada
+
+inputT_in = ft.TextField(label="Temperatura", suffix_text="(K)", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+inputQ_in = ft.TextField(label="Vazão", suffix_text="(L/min)", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+inputy_in = ft.TextField(label="Fração molar", height=input_height, cursor_height=input_cursor_height,
+                         width=input_width)
+label_row_in = ft.Row(controls=[ft.Text("Dados de Entrada")], spacing=25)
+row_input_in1 = ft.Row(controls=[inputP_in, inputT_in], spacing=25)
+container_espaco_in = ft.Container(content=None, height=5)
+row_input_in2 = ft.Row(controls=[inputQ_in, inputy_in], spacing=25)
+column_input_in = ft.Column(controls=[label_row_in, row_input_in1, container_espaco_in, row_input_in2], spacing=5)
+container_in = ft.Container(content=column_input_in)
+inputP_in.value = "1"
+inputT_in.value = "298.15"
+inputQ_in.value = "0.5"
+inputy_in.value = "0.6"
+
+# input_sincronização
+input_sync_t = ft.TextField(label="Tempo Final", height=input_height,
+                            cursor_height=input_cursor_height, width=input_width)
+input_sync_t.value = "19"
+input_sync_int = ft.TextField(label="Número de Intervalos", height=input_height,
+                              cursor_height=input_cursor_height, width=input_width)
+input_sync_int.value = "100"
+
+label_row_sync = ft.Row(controls=[ft.Text("Sincronização")], spacing=25)
+row_input_sync = ft.Row(controls=[input_sync_t, input_sync_int], spacing=25)
+column_input_sync = ft.Column(controls=[label_row_sync, row_input_sync], spacing=5)
+container_sync = ft.Container(content=column_input_sync)
+
+input_column = ft.Column(controls=[container_leito, ft.Divider(thickness=0.5), container_ads,
+                                   ft.Divider(thickness=0.5), container_in, ft.Divider(thickness=0.5),
+                                   container_sync], spacing=7)
+input_container = ft.Container(content=input_column)
 
 
-def main(page, tab_name, tab_sync_class):
+def main(page, tab_name):
     principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
-
-
-    # inputs do leito
-    inputP_in = ft.TextField(label="Pressão", suffix_text="(bar)", height=input_height,
-                             cursor_height=input_cursor_height, width=input_width)
-    inputL_bed = ft.TextField(label="Comprimento", suffix_text="(m)", height=input_height,
-                              cursor_height=input_cursor_height, width=input_width)
-    inputD_bed = ft.TextField(label="Diâmetro", suffix_text="(m)", height=input_height,
-                              cursor_height=input_cursor_height, width=input_width)
-    label_row = ft.Row(controls=[ft.Text("Propriedades do Leito")], spacing=25)
-    row_input_leito = ft.Row(controls=[inputL_bed, inputD_bed], spacing=25)
-    container_espaco = ft.Container(content=None, height=10)
-    column_input_leito = ft.Column(controls=[container_espaco, label_row, row_input_leito], spacing=5)
-    container_leito = ft.Container(content=column_input_leito)
-    inputL_bed.value = "0.1921"
-    inputD_bed.value = "0.0211"
-
-    # inputs adsorvente
-    inputM_ads = ft.TextField(label="Massa", suffix_text="(kg)", height=input_height, cursor_height=input_cursor_height,
-                              width=input_width)
-    inputPorosidade = ft.TextField(label="Porosidade", height=input_height, cursor_height=input_cursor_height,
-                                   width=input_width)
-    label_row_ads = ft.Row(controls=[ft.Text("Propriedades do Adsorvente")], spacing=25)
-    row_input_ads = ft.Row(controls=[inputM_ads, inputPorosidade], spacing=25)
-    column_input_ads = ft.Column(controls=[label_row_ads, row_input_ads], spacing=5)
-    container_ads = ft.Container(content=column_input_ads)
-    inputM_ads.value = "0.0383"
-    inputPorosidade.value = "0.5671"
-
-    # inputs_entrada
-
-    inputT_in = ft.TextField(label="Temperatura", suffix_text="(K)", height=input_height,
-                             cursor_height=input_cursor_height, width=input_width)
-    inputQ_in = ft.TextField(label="Vazão", suffix_text="(L/min)", height=input_height,
-                             cursor_height=input_cursor_height, width=input_width)
-    inputy_in = ft.TextField(label="Fração molar", height=input_height, cursor_height=input_cursor_height,
-                             width=input_width)
-    label_row_in = ft.Row(controls=[ft.Text("Dados de Entrada")], spacing=25)
-    row_input_in1 = ft.Row(controls=[inputP_in, inputT_in], spacing=25)
-    container_espaco_in = ft.Container(content=None, height=5)
-    row_input_in2 = ft.Row(controls=[inputQ_in, inputy_in], spacing=25)
-    column_input_in = ft.Column(controls=[label_row_in, row_input_in1, container_espaco_in, row_input_in2], spacing=5)
-    container_in = ft.Container(content=column_input_in)
-    inputP_in.value = "1"
-    inputT_in.value = "298.15"
-    inputQ_in.value = "0.5"
-    inputy_in.value = "0.6"
-
-    # input_sincronização
-    input_sync_t = ft.TextField(label="Tempo Final", height=input_height,
-                                cursor_height=input_cursor_height, width=input_width)
-    input_sync_t.value = "19"
-    input_sync_int = ft.TextField(label="Número de Intervalos", height=input_height,
-                                  cursor_height=input_cursor_height, width=input_width)
-    input_sync_int.value = "100"
-
-    label_row_sync = ft.Row(controls=[ft.Text("Sincronização")], spacing=25)
-    row_input_sync = ft.Row(controls=[input_sync_t, input_sync_int], spacing=25)
-    column_input_sync = ft.Column(controls=[label_row_sync, row_input_sync], spacing=5)
-    container_sync = ft.Container(content=column_input_sync)
-
-    input_column = ft.Column(controls=[container_leito, ft.Divider(thickness=0.5), container_ads,
-                                       ft.Divider(thickness=0.5), container_in, ft.Divider(thickness=0.5),
-                                       container_sync], spacing=7)
-    input_container = ft.Container(content=input_column)
 
     principal.controls.insert(0, input_container)
 
@@ -296,8 +294,7 @@ def main(page, tab_name, tab_sync_class):
         not_synchronized_experiment.porosity = float(__return_input_value__(inputPorosidade.value))
 
         sync_bt = ft.ElevatedButton("Sincronizar",
-                                    on_click=lambda _: __sincronizar_dados__(principal, not_synchronized_experiment,
-                                                                             input_sync_t, input_sync_int,tab_sync_class))
+                                    on_click=lambda _: __sincronizar_dados__(principal, not_synchronized_experiment))
         while len(linha1.controls) > 1:
             linha1.controls.remove(linha1.controls[1])
         linha1.controls.insert(1, sync_bt)
@@ -318,9 +315,8 @@ def __return_input_value__(input):
 
 def __sincronizar_dados__(
         principal,
-        ns_exp,
-        input_sync_t,
-        input_sync_int, tab_sync_class):
+        ns_exp):
+    principal.update()
     sync_experiment = sync.synchronize(
         ns_exp,
         ns_exp.time_y_column[0],
@@ -328,26 +324,15 @@ def __sincronizar_dados__(
         int(__return_input_value__(input_sync_int.value))
     )
 
-    tab_sync_class.experiment_name = sync_experiment.experiment_name
-    tab_sync_class.inlet_pressure = sync_experiment.inlet_pressure
-    tab_sync_class.inlet_flow = sync_experiment.inlet_flow
-    tab_sync_class.inlet_temperature = sync_experiment.inlet_temperature
-    tab_sync_class.inlet_y = sync_experiment.inlet_y
-    tab_sync_class.adsorbent_mass = sync_experiment.adsorbent_mass
-    tab_sync_class.bed_length = sync_experiment.bed_length
-    tab_sync_class.bed_diameter = sync_experiment.bed_diameter
-    tab_sync_class.porosity = sync_experiment.porosity
-    tab_sync_class.time_column = sync_experiment.time_column
-    tab_sync_class.temperature_column = sync_experiment.temperature_column
-    tab_sync_class.flow_column = sync_experiment.flow_column
-    tab_sync_class.y_column = sync_experiment.y_column
-    tab_sync_class.temperature_unit = sync_experiment.temperature_unit
-    tab_sync_class.pressure_unit = sync_experiment.pressure_unit
-    tab_sync_class.poly_flow = sync_experiment.poly_flow
-    tab_sync_class.poly_temperature = sync_experiment.poly_temperature
-    tab_sync_class.poly_y = sync_experiment.poly_y
-    tab_sync_class.f_out_column = sync_experiment.f_out_column
-    tab_sync_class.c_out_column = sync_experiment.c_out_column
+    sync_experiment.inlet_pressure = float(__return_input_value__(inputP_in.value))
+    sync_experiment.inlet_flow = float(__return_input_value__(inputQ_in.value))
+    sync_experiment.inlet_temperature = float(__return_input_value__(inputT_in.value))
+    sync_experiment.inlet_y = float(__return_input_value__(inputy_in.value))
+    sync_experiment.adsorbent_mass = float(__return_input_value__(inputM_ads.value))
+    sync_experiment.bed_length = float(__return_input_value__(inputL_bed.value))
+    sync_experiment.bed_diameter = float(__return_input_value__(inputD_bed.value))
+    sync_experiment.porosity = float(__return_input_value__(inputPorosidade.value))
+
 
     vetorCol = ft.Column(controls=None)
     vetorCol.controls.clear()
@@ -407,13 +392,11 @@ def __sincronizar_dados__(
                        (sync_experiment.time_column[i] - sync_experiment.time_column[i - 1]))
 
     Gascte = 0.08314462
-    Lbed = sync_experiment.bed_length
-    dbed = sync_experiment.bed_diameter
     Vbed = 1000 * (sync_experiment.bed_diameter ** 2) * sync_experiment.bed_length * 0.25 * math.pi
     epsilonL = sync_experiment.porosity
     mads = sync_experiment.adsorbent_mass
     Qin = sync_experiment.inlet_flow / 60  # L/s
-    CinCH4 = 1 * sync_experiment.inlet_y / (Gascte * sync_experiment.inlet_temperature)  # mol/L
+    CinCH4 = sync_experiment.inlet_pressure * sync_experiment.inlet_y / (Gascte * sync_experiment.inlet_temperature)  # mol/L
 
     qch4 = (CinCH4 * Qin * 60 * (
             sync_experiment.time_column[len(sync_experiment.time_column) - 1] - sync_experiment.time_column[
