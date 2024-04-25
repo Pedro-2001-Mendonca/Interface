@@ -39,8 +39,8 @@ def __create_db_ns_experiment__(db_name, ns_exp):
                            "ads_mass float, "
                            "bed_length float, "
                            "bed_diameter float, "
-                           "porosity float,"
-                           "c_in float)")
+                           "porosity float"
+                           ")")
 
         new_cursor.execute("INSERT INTO constants VALUES("
                            + str(ns_exp.inlet_temperature) +
@@ -51,7 +51,6 @@ def __create_db_ns_experiment__(db_name, ns_exp):
                            "," + str(ns_exp.bed_length) +
                            "," + str(ns_exp.bed_diameter) +
                            "," + str(ns_exp.porosity) +
-                           "," + str(ns_exp.c_in) +
                            ")")
 
     except:

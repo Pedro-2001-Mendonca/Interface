@@ -89,7 +89,6 @@ class NotSynchronizedExperiment:
     temperature_unit: str
     pressure_unit: str
     flow_unit: str
-    c_in: float
     porosity: float
 
     def __init__(self,
@@ -110,7 +109,6 @@ class NotSynchronizedExperiment:
                  temperature_unit: str,
                  pressure_unit: str,
                  flow_unit: str,
-                 c_in: float,
                  porosity: float):
         self.experiment_name = experiment_name
         self.inlet_pressure = inlet_pressure
@@ -129,6 +127,5 @@ class NotSynchronizedExperiment:
         self.temperature_unit = temperature_unit
         self.pressure_unit = pressure_unit
         self.flow_unit = flow_unit
-        self.c_in = c_in
         self.porosity = porosity
 

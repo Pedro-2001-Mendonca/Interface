@@ -34,7 +34,7 @@ def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_po
             new_y.append(poly_y[len(poly_y)-1](new_time[i]))
 
         flow_qls.append(new_flow[i] / (60 * 1000))
-        concentration.append(new_y[i] * 0.9869 / (
+        concentration.append(new_y[i] * ns_class.inlet_pressure / (
                 (new_temperature[i] + 273.15) * 0.082057))  # Pressão = 0.98, Constante dos gases ideais =0.082057
         f_out.append(concentration[i] * flow_qls[i])
 
