@@ -16,9 +16,9 @@ def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_po
     f_out = []
 
     flow_qls = []
-
+    gas_cte = 0.08314462
     for i in range(len(new_time)):
-        if get_position(new_time[i], ns_class.time_temperature_column) < len(poly_y):
+        if get_position(new_time[i], ns_class.time_temperature_column) < len(poly_temperature):
             new_temperature.append(poly_temperature[get_position(new_time[i], ns_class.time_temperature_column)](new_time[i]))
         else:
             new_temperature.append(poly_temperature[len(poly_temperature)-1](new_time[i]))
@@ -33,9 +33,9 @@ def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_po
         else:
             new_y.append(poly_y[len(poly_y)-1](new_time[i]))
 
-        flow_qls.append(new_flow[i] / (60 * 1000))
+        flow_qls.append(new_flow[i])
         concentration.append(new_y[i] * ns_class.inlet_pressure / (
-                (new_temperature[i] + 273.15) * 0.082057))  # Pressão = 0.98, Constante dos gases ideais =0.082057
+                (new_temperature[i]) * gas_cte))
         f_out.append(concentration[i] * flow_qls[i])
 
     sClass = ec.SynchronizedExperiment(

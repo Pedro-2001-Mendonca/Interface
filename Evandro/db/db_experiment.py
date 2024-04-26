@@ -5,7 +5,7 @@ from Evandro.classes import experiment_class as ec
 ns_exp = ec.NotSynchronizedExperiment
 def __create_db_ns_experiment__(db_name, ns_exp):
 
-    new_db = sqlite3.connect(db_name + '.db')
+    new_db = sqlite3.connect(db_name + '.exp')
 
     try:
 

@@ -53,32 +53,4 @@ def __remove_tabs__(tabs):
         tabs.selected_index = 0
 
 
-def __compile_exp__():
-    print(experiment_list[0].inlet_pressure)
-    print(experiment_list[1].inlet_pressure)
 
-
-def __create_sync_exp__():
-
-    return ec.SynchronizedExperiment(
-    experiment_name="",
-    inlet_pressure=0,
-    inlet_flow=0,
-    inlet_temperature=0,
-    inlet_y=0,
-    adsorbent_mass=0,
-    bed_length=0,
-    bed_diameter=0,
-    time_column=[],
-    temperature_column=[],
-    flow_column=[],
-    y_column=[],
-    temperature_unit="K",
-    pressure_unit="bar",
-    flow_unit="L/min",
-    poly_flow=[],
-    poly_temperature=[],
-    poly_y=[],
-    f_out_column=[],
-    c_out_column=[],
-    porosity=0)

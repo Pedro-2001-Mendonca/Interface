@@ -23,6 +23,7 @@ class SynchronizedExperiment:
     f_out_column: []
     c_out_column: []
     porosity: float
+    q: float
 
 
     def __init__(self,
@@ -46,7 +47,8 @@ class SynchronizedExperiment:
                  poly_y: [],
                  f_out_column: [],
                  c_out_column: [],
-                 porosity: float):
+                 porosity: float,
+                 ):
         self.experiment_name = experiment_name
         self.inlet_pressure = inlet_pressure
         self.inlet_flow = inlet_flow
@@ -68,6 +70,7 @@ class SynchronizedExperiment:
         self.f_out_column = f_out_column
         self.c_out_column = c_out_column
         self.porosity = porosity
+
 
 
 @dataclass
