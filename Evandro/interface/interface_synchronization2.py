@@ -383,39 +383,39 @@ def __sincronizar_dados__(
     sync_experiment.q = qch4
 
     figura1 = plt.plot(ns_exp.time_temperature_column,
-                       ns_exp.temperature_column, 'r-o')
+                       ns_exp.temperature_column, 'b-o', label='Dados não Sincronizados')
     plt.xlabel("tempo (min)")
     plt.ylabel("temperatura (K)")
     plt.title("Dados não sincronizados")
-    plt.close()
-    figura11 = plt.plot(sync_experiment.time_column, sync_experiment.temperature_column, 'r-o')
+    figura11 = plt.plot(sync_experiment.time_column, sync_experiment.temperature_column, 'ro',
+                        label='Dados Sincronizados')
     plt.xlabel("tempo (min)")
     plt.ylabel("temperatura (K)")
-    plt.title("Dados sincronizados")
+    plt.title("Temperatura")
+    plt.legend(loc="lower right")
     plt.close()
 
     figura2 = plt.plot(ns_exp.time_flow_column,
-                       ns_exp.flow_column, 'b-o')
+                       ns_exp.flow_column, 'b-o', label='Dados não Sincronizados')
     plt.xlabel("tempo (s)")
     plt.ylabel("vazão (L/s)")
-    plt.title("Dados não sincronizados")
-    plt.close()
-    figura22 = plt.plot(sync_experiment.time_column, sync_experiment.flow_column, 'b-o')
+
+    figura22 = plt.plot(sync_experiment.time_column, sync_experiment.flow_column, 'ro', label='Dados Sincronizados')
     plt.xlabel("tempo (s)")
     plt.ylabel("vazão (L/s)")
-    plt.title("Dados sincronizados")
+    plt.title('Vazão')
+    plt.legend(loc="lower right")
     plt.close()
 
     figura3 = plt.plot(ns_exp.time_y_column,
-                       ns_exp.y_column, 'k-o')
+                       ns_exp.y_column, 'b-o', label='Dados não Sincronizados')
     plt.xlabel("tempo (s)")
     plt.ylabel("fração molar")
     plt.title("Dados não sincronizados")
-    plt.close()
-    figura33 = plt.plot(sync_experiment.time_column, sync_experiment.y_column, 'k-o')
+    figura33 = plt.plot(sync_experiment.time_column, sync_experiment.y_column, 'ro', label='Dados Sincronizados')
     plt.xlabel("tempo (min)")
     plt.ylabel("fração molar")
-    plt.title("Dados sincronizados")
+    plt.title("Fração Molar")
     plt.close()
 
     grafico1 = MatplotlibChart(figura1[0].figure)
@@ -427,13 +427,13 @@ def __sincronizar_dados__(
     grafico3 = MatplotlibChart(figura3[0].figure)
     grafico33 = MatplotlibChart(figura33[0].figure)
 
-    row_figure1 = ft.Row([grafico1, grafico11])
+    row_figure1 = ft.Row([grafico1])
     fig_container1 = ft.Container(content=row_figure1, width=1000, height=400, )
 
-    row_figure2 = ft.Row([grafico2, grafico22])
+    row_figure2 = ft.Row([grafico2])
     fig_container2 = ft.Container(content=row_figure2, width=1000, height=400)
 
-    row_figure3 = ft.Row([grafico3, grafico33])
+    row_figure3 = ft.Row([grafico3])
     fig_container3 = ft.Container(content=row_figure3, width=1000, height=400)
 
     fig_column = ft.Column(controls=[fig_container1, fig_container2, fig_container3], spacing=0)
