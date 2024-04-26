@@ -65,6 +65,11 @@ inputQ_in.value = "0.008333"
 inputy_in.value = "0.6"
 
 # input_sincronização
+input_sync_t_init = ft.TextField(label="Tempo Inicial", height=input_height,
+                            cursor_height=input_cursor_height, width=input_width, suffix_text="(s)")
+input_sync_t_init.value = "180"
+
+
 input_sync_t = ft.TextField(label="Tempo Final", height=input_height,
                             cursor_height=input_cursor_height, width=input_width, suffix_text="(s)")
 input_sync_t.value = "1140"
@@ -72,8 +77,8 @@ input_sync_int = ft.TextField(label="Número de Intervalos", height=input_height
                               cursor_height=input_cursor_height, width=input_width)
 input_sync_int.value = "100"
 
-label_row_sync = ft.Row(controls=[ft.Text("Sincronização")], spacing=25)
-row_input_sync = ft.Row(controls=[input_sync_t, input_sync_int], spacing=25)
+label_row_sync = ft.Row(controls=[ft.Text("Sincronizar")], spacing=25)
+row_input_sync = ft.Row(controls=[input_sync_t_init, input_sync_t, input_sync_int], spacing=25)
 column_input_sync = ft.Column(controls=[label_row_sync, row_input_sync], spacing=5)
 container_sync = ft.Container(content=column_input_sync)
 
@@ -272,10 +277,6 @@ def main(page, tab_name):
                     ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
                                  height=newheigth,
                                  text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-            # vetorLinha_Export.append(sync_experiment.time_column[i])
-            # vetorLinha_Export.append(sync_experiment.temperature_column[i])
-            # vetorLinha_Export.append(sync_experiment.flow_column[i])
-            # vetorLinha_Export.append(sync_experiment.y_column[i])
 
             vetorCol.controls.insert(i + 2, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
 
@@ -285,14 +286,6 @@ def main(page, tab_name):
         principal.controls.insert(2, vetorCol)
 
         __update_sync__(not_synchronized_experiment)
-        #not_synchronized_experiment.inlet_pressure = float(__return_input_value__(inputP_in.value))
-        #not_synchronized_experiment.inlet_flow = float(__return_input_value__(inputQ_in.value))
-        #not_synchronized_experiment.inlet_temperature = float(__return_input_value__(inputT_in.value))
-        #not_synchronized_experiment.inlet_y = float(__return_input_value__(inputy_in.value))
-        #not_synchronized_experiment.adsorbent_mass = float(__return_input_value__(inputM_ads.value))
-        #not_synchronized_experiment.bed_length = float(__return_input_value__(inputL_bed.value))
-        #not_synchronized_experiment.bed_diameter = float(__return_input_value__(inputD_bed.value))
-        #not_synchronized_experiment.porosity = float(__return_input_value__(inputPorosidade.value))
 
         sync_bt = ft.ElevatedButton("Sincronizar",
                                     on_click=lambda _: __sincronizar_dados__(principal, not_synchronized_experiment,
@@ -319,74 +312,56 @@ def __sincronizar_dados__(
         principal,
         ns_exp, linha1, page):
     principal.update()
+
+
     sync_experiment = sync.synchronize(
         ns_exp,
-        ns_exp.time_y_column[0],
+        float(__return_input_value__(input_sync_t_init.value)),
         float(__return_input_value__(input_sync_t.value)),
         int(__return_input_value__(input_sync_int.value))
     )
 
     __update_sync__(sync_experiment)
-    #sync_experiment.inlet_pressure = float(__return_input_value__(inputP_in.value))
-    #sync_experiment.inlet_flow = float(__return_input_value__(inputQ_in.value))
-    #sync_experiment.inlet_temperature = float(__return_input_value__(inputT_in.value))
-    #sync_experiment.inlet_y = float(__return_input_value__(inputy_in.value))
-    #sync_experiment.adsorbent_mass = float(__return_input_value__(inputM_ads.value))
-    #sync_experiment.bed_length = float(__return_input_value__(inputL_bed.value))
-    #sync_experiment.bed_diameter = float(__return_input_value__(inputD_bed.value))
-    #sync_experiment.porosity = float(__return_input_value__(inputPorosidade.value))
-
 
     vetorCol = ft.Column(controls=None)
     vetorCol.controls.clear()
-    vetorLinha = []
     newheigth = 35
-    vetorLinha.append(ft.TextField("Tempo (s)", text_align=ft.TextAlign.CENTER, width=150,
-                                   height=newheigth,
-                                   text_vertical_align=-1,
-                                   content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                                   border=ft.InputBorder.NONE, read_only=True))
-    vetorLinha.append(ft.TextField("Temperatura (K)", text_align=ft.TextAlign.CENTER, width=150,
-                                   height=newheigth,
-                                   text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                                   border=ft.InputBorder.NONE, read_only=True))
-    vetorLinha.append(ft.TextField("Vazão (L/min)", text_align=ft.TextAlign.CENTER, width=150,
-                                   height=newheigth,
-                                   text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                                   border=ft.InputBorder.NONE, read_only=True))
-    vetorLinha.append(ft.TextField("Fração Molar", text_align=ft.TextAlign.CENTER, width=150,
-                                   height=newheigth,
-                                   text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                                   border=ft.InputBorder.NONE, read_only=True))
+    vetorLinha = [ft.TextField("Tempo (s)", text_align=ft.TextAlign.CENTER, width=150,
+                               height=newheigth,
+                               text_vertical_align=-1,
+                               content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                               border=ft.InputBorder.NONE, read_only=True),
+                  ft.TextField("Temperatura (K)", text_align=ft.TextAlign.CENTER, width=150,
+                               height=newheigth,
+                               text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                               border=ft.InputBorder.NONE, read_only=True),
+                  ft.TextField("Vazão (L/min)", text_align=ft.TextAlign.CENTER, width=150,
+                               height=newheigth,
+                               text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                               border=ft.InputBorder.NONE, read_only=True),
+                  ft.TextField("Fração Molar", text_align=ft.TextAlign.CENTER, width=150,
+                               height=newheigth,
+                               text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                               border=ft.InputBorder.NONE, read_only=True)]
     vetorCol.controls.insert(0, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
-    vetorCol_Export = []
-    for i in range(len(sync_experiment.time_column)):
-        vetorLinha = []
-        vetorLinha_Export = []
 
-        vetorLinha.append(
-            ft.TextField(round(sync_experiment.time_column[i], 5), text_align=ft.TextAlign.CENTER, width=150,
-                         height=newheigth,
-                         text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-        vetorLinha.append(
-            ft.TextField(round(sync_experiment.temperature_column[i], 5), text_align=ft.TextAlign.CENTER, width=150,
-                         height=newheigth,
-                         text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-        vetorLinha.append(
-            ft.TextField(round(sync_experiment.flow_column[i], 5), text_align=ft.TextAlign.CENTER, width=150,
-                         height=newheigth,
-                         text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-        vetorLinha.append(
-            ft.TextField(round(sync_experiment.y_column[i], 5), text_align=ft.TextAlign.CENTER, width=150,
-                         height=newheigth,
-                         text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-        vetorLinha_Export.append(sync_experiment.time_column[i])
-        vetorLinha_Export.append(sync_experiment.temperature_column[i])
-        vetorLinha_Export.append(sync_experiment.flow_column[i])
-        vetorLinha_Export.append(sync_experiment.y_column[i])
+    for i in range(len(sync_experiment.time_column)):
+        vetorLinha = [ft.TextField(round(sync_experiment.time_column[i], 5), text_align=ft.TextAlign.CENTER, width=150,
+                                   height=newheigth,
+                                   text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)),
+                      ft.TextField(round(sync_experiment.temperature_column[i], 5), text_align=ft.TextAlign.CENTER,
+                                   width=150,
+                                   height=newheigth,
+                                   text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)),
+                      ft.TextField(round(sync_experiment.flow_column[i], 5), text_align=ft.TextAlign.CENTER, width=150,
+                                   height=newheigth,
+                                   text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)),
+                      ft.TextField(round(sync_experiment.y_column[i], 5), text_align=ft.TextAlign.CENTER, width=150,
+                                   height=newheigth,
+                                   text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2))]
 
         vetorCol.controls.insert(i + 1, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
-        vetorCol_Export.append(vetorLinha_Export)
+
 
     intFoutCH4 = 0
 
@@ -497,6 +472,8 @@ def __sincronizar_dados__(
 
     while len(principal.controls) > 2:
         principal.controls.remove(principal.controls[2])
+    while len(linha1.controls) > 2:
+        linha1.controls.remove(linha1.controls[2])
     if len(linha1.controls) < 3:
         linha1.controls.insert(2, save_bt)
         linha1.controls.insert(3, export_bt)
