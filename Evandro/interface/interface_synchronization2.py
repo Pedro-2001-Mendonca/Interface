@@ -379,7 +379,7 @@ def __sincronizar_dados__(
         0]) - intFoutCH4 - CinCH4 * Vbed * epsilonL) / mads
 
     print("qCH4 = " + str(qch4))
-
+    print("Int_F = " + str(intFoutCH4))
     sync_experiment.q = qch4
 
     figura1 = plt.plot(ns_exp.time_temperature_column,
