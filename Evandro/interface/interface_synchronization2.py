@@ -66,9 +66,8 @@ inputy_in.value = "0.6"
 
 # input_sincronização
 input_sync_t_init = ft.TextField(label="Tempo Inicial", height=input_height,
-                            cursor_height=input_cursor_height, width=input_width, suffix_text="(s)")
-input_sync_t_init.value = "180"
-
+                                 cursor_height=input_cursor_height, width=input_width, suffix_text="(s)")
+input_sync_t_init.value = "0"
 
 input_sync_t = ft.TextField(label="Tempo Final", height=input_height,
                             cursor_height=input_cursor_height, width=input_width, suffix_text="(s)")
@@ -313,7 +312,6 @@ def __sincronizar_dados__(
         ns_exp, linha1, page):
     principal.update()
 
-
     sync_experiment = sync.synchronize(
         ns_exp,
         float(__return_input_value__(input_sync_t_init.value)),
@@ -335,7 +333,7 @@ def __sincronizar_dados__(
                                height=newheigth,
                                text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
                                border=ft.InputBorder.NONE, read_only=True),
-                  ft.TextField("Vazão (L/min)", text_align=ft.TextAlign.CENTER, width=150,
+                  ft.TextField("Vazão (L/s)", text_align=ft.TextAlign.CENTER, width=150,
                                height=newheigth,
                                text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
                                border=ft.InputBorder.NONE, read_only=True),
@@ -362,19 +360,19 @@ def __sincronizar_dados__(
 
         vetorCol.controls.insert(i + 1, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
 
-
     intFoutCH4 = 0
 
     for i in range(1, len(sync_experiment.time_column)):
-        intFoutCH4 += (((sync_experiment.f_out_column[i] + sync_experiment.f_out_column[i - 1]) / 2) *
-                       (sync_experiment.time_column[i] - sync_experiment.time_column[i - 1]))
+        intFoutCH4 += (((sync_experiment.f_out_column[i] + sync_experiment.f_out_column[i - 1]) / 2) * (
+                    sync_experiment.time_column[i] - sync_experiment.time_column[i - 1]))
 
     Gascte = 0.08314462
     Vbed = 1000 * (sync_experiment.bed_diameter ** 2) * sync_experiment.bed_length * 0.25 * math.pi
     epsilonL = sync_experiment.porosity
     mads = sync_experiment.adsorbent_mass
     Qin = sync_experiment.inlet_flow  # L/s
-    CinCH4 = sync_experiment.inlet_pressure * sync_experiment.inlet_y / (Gascte * sync_experiment.inlet_temperature)  # mol/L
+    CinCH4 = sync_experiment.inlet_pressure * sync_experiment.inlet_y / (
+                Gascte * sync_experiment.inlet_temperature)  # mol/L
 
     qch4 = (CinCH4 * Qin * (
             sync_experiment.time_column[len(sync_experiment.time_column) - 1] - sync_experiment.time_column[
@@ -442,7 +440,7 @@ def __sincronizar_dados__(
 
     text_q = ft.Container(
         content=ft.TextField(label="Quantidade Adsorvida (q)", value=round(qch4, 8), read_only=True,
-                             suffix_text="L/kg", width=200))
+                             suffix_text="mol/kg", width=200))
 
     def save_file_result(e: ft.FilePickerResultEvent):
         save_file_path = e.path if e.path else None
@@ -483,6 +481,7 @@ def __sincronizar_dados__(
     principal.controls.insert(5, fig_column)
     principal.update()
     page.update()
+
 
 def __update_sync__(sync_exp):
     sync_exp.inlet_pressure = float(__return_input_value__(inputP_in.value))
