@@ -4,12 +4,11 @@ from Evandro.classes import experiment_class as ec
 
 
 def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_points):
-    print(ns_class.time_y_column)
+
     new_time = np.linspace(initial_t, final_t, n_points)
     poly_temperature = interpolation(ns_class.time_temperature_column, ns_class.temperature_column)
     poly_flow = interpolation(ns_class.time_flow_column, ns_class.flow_column)
     poly_y = interpolation(ns_class.time_y_column, ns_class.y_column)
-
     new_temperature = []
     new_flow = []
     new_y = []

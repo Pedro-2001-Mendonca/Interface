@@ -24,6 +24,9 @@ class SynchronizedExperiment:
     c_out_column: []
     porosity: float
     q: float
+    initial_t:  float
+    final_t: float
+    n_partitions: float
 
 
     def __init__(self,

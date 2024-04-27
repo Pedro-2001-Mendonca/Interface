@@ -5,6 +5,7 @@ from Evandro.classes import experiment_class as ec
 
 experiment_list = []
 
+
 def __create_tabs__(LinhaPrincipal, page):
     if LinhaPrincipal.controls[2] is not None:
         LinhaPrincipal.controls[2].clean()

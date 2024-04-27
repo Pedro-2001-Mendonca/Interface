@@ -378,8 +378,8 @@ def __sincronizar_dados__(
             sync_experiment.time_column[len(sync_experiment.time_column) - 1] - sync_experiment.time_column[
         0]) - intFoutCH4 - CinCH4 * Vbed * epsilonL) / mads
 
-    print("qCH4 = " + str(qch4))
-    print("Int_F = " + str(intFoutCH4))
+    #print("qCH4 = " + str(qch4))
+    #print("Int_F = " + str(intFoutCH4))
     sync_experiment.q = qch4
 
     figura1 = plt.plot(ns_exp.time_temperature_column,
@@ -445,8 +445,7 @@ def __sincronizar_dados__(
     def save_file_result(e: ft.FilePickerResultEvent):
         save_file_path = e.path if e.path else None
         if save_file_path:
-            __update_sync__(sync_experiment)
-            db.__create_db_ns_experiment__(save_file_path.title(), ns_exp)
+            db.__create_db_experiment__(save_file_path.title(), sync_experiment)
 
     save_file_dialog = ft.FilePicker(on_result=save_file_result)
 
@@ -492,3 +491,6 @@ def __update_sync__(sync_exp):
     sync_exp.bed_length = float(__return_input_value__(inputL_bed.value))
     sync_exp.bed_diameter = float(__return_input_value__(inputD_bed.value))
     sync_exp.porosity = float(__return_input_value__(inputPorosidade.value))
+    sync_exp.initial_t = float(__return_input_value__(input_sync_t_init.value))
+    sync_exp.final_t = float(__return_input_value__(input_sync_t.value))
+    sync_exp.n_partitions = float(__return_input_value__(input_sync_int.value))

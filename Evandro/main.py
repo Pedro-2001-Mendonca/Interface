@@ -2,8 +2,19 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import flet as ft
-import auxiliar.Tabs as tbs
-from Evandro.utils import dialog
+from Evandro.auxiliar import Tabs as tbs
+from interface import visulize_experiment as pe
+from interface import compile_exp as cp
+import matplotlib
+import operator
+import sqlite3
+import numpy as np
+import pandas as pd
+import xlsxwriter
+from flet_core.matplotlib_chart import MatplotlibChart
+import math
+matplotlib.use("svg")
+
 
 Base = declarative_base()
 
@@ -11,14 +22,10 @@ Base = declarative_base()
 def __change_page__(index, LinhaPrincipal, page):
     if index == 0:
         tbs.__create_tabs__(LinhaPrincipal, page)
-    #if index == 1:
-    #    niTD.main(LinhaPrincipal, page)
-
-
-def __seleciona_arquivo__(e: ft.FilePickerResultEvent):
-    if e.files is not None:
-        for f in e.files:
-            arquivo = f.path
+    if index == 1:
+        pe.main(LinhaPrincipal, page)
+    if index == 2:
+        cp.main(LinhaPrincipal, page)
 
 
 def main(page: ft.Page):
