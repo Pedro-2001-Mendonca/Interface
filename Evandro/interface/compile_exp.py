@@ -97,5 +97,6 @@ def __update_page():
 
     principal.controls.insert(3, vetorCol)
     principal.controls.insert(4, fig_container)
+    plt.close()
 
     principal.update()
