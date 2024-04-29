@@ -2,8 +2,8 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import flet as ft
-from Evandro.auxiliar import Tabs as tbs
-from interface import visulize_experiment as pe
+from auxiliar import Tabs as tbs
+from interface import pe_head as pe
 from interface import compile_exp as cp
 import matplotlib
 import operator

@@ -1,8 +1,8 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
 import numpy as np
-from Evandro.auxiliar import load_excel_file as excel
-from Evandro.db import db_experiment as db
+from Interface.Evandro.auxiliar import load_excel_file as excel
+from Interface.Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
 
 sync_exp_list = []
@@ -20,6 +20,21 @@ def seleciona_arquivo(e: ft.FilePickerResultEvent):
 seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
 principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
 
+def __onchange(coluna, row):
+    coluna.controls.append(ft.Text("Qualquer coisa"))
+    print(row.controls[0].value)
+    if str(row.controls[0].value) == "Langmuir":
+        row.controls[1].src = f"../Langmuir.jpeg"
+    elif str(row.controls[0].value) == "Sips":
+        row.controls[1].src = f"../Sips.jpeg"
+    elif str(row.controls[0].value) == "Toth":
+        row.controls[1].src = f"../Toth.jpeg"
+    elif str(row.controls[0].value) == "Langmuir Multissítios":
+        row.controls[1].src = f"../Multissitios.jpeg"
+    row.controls[1].visible = True
+    coluna.update()
+
+
 
 def main(linha_principal, page):
 
@@ -27,11 +42,24 @@ def main(linha_principal, page):
         linha_principal.controls[2].clean()
         linha_principal.controls.remove(linha_principal.controls[2])
 
-    fp = ft.ElevatedButton("Carregar Experimentos", on_click=lambda _: seleciona_arquivo_dialog.pick_files(
-        allowed_extensions=["exp"],allow_multiple=True), width=200)
+    coluna = ft.Column(expand=True)
+    row = ft.Row(controls=[
+        ft.Dropdown(
+            width=200,
+            options=[
+                ft.dropdown.Option("Langmuir"),
+                ft.dropdown.Option("Sips"),
+                ft.dropdown.Option("Toth"),
+                ft.dropdown.Option("Langmuir Multissítios"),
+            ],
+            on_change=lambda _: __onchange(coluna, row),
+        ),
+        ft.Image(visible=False)
 
-    principal.controls.insert(0, fp)
-    linha_principal.controls.append(principal)
+    ])
+    coluna.controls.insert(0, row)
+
+    linha_principal.controls.append(coluna)
     page.overlay.append(seleciona_arquivo_dialog)
     linha_principal.update()
     page.update()

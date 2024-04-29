@@ -1,6 +1,6 @@
 import numpy as np
 
-from Evandro.classes import experiment_class as ec
+from Interface.Evandro.classes import experiment_class as ec
 
 
 def synchronize(ns_class: ec.NotSynchronizedExperiment, initial_t, final_t, n_points):

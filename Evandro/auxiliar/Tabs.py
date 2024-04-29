@@ -1,7 +1,7 @@
 import flet as ft
 
-from Evandro.interface import interface_synchronization2 as i_sc
-from Evandro.classes import experiment_class as ec
+from Interface.Evandro.interface import interface_synchronization2 as i_sc
+from Interface.Evandro.classes import experiment_class as ec
 
 experiment_list = []
 
