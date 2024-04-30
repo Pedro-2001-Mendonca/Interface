@@ -4,7 +4,6 @@ import numpy as np
 from Evandro.auxiliar import load_excel_file as excel
 from Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
-from Evandro.interface import pe_body as pb
 
 sync_exp_list = []
 
@@ -12,56 +11,29 @@ sync_exp_list = []
 
 
 
-def __onchange(coluna, row, page):
+def main(coluna_principal, page):
+    principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
+    def seleciona_arquivo(e: ft.FilePickerResultEvent):
+        sync_exp_list.clear()
+        if e.files:
+            for f in e.files:
+                db_name = f.path
+                sync_exp_list.append(db.__load_db_pack_experiment__(db_name))
+            __update_page__(principal)
 
-    if str(row.controls[0].value) == "Langmuir":
-        row.controls[1].src = f"../Langmuir.jpeg"
-        pb.main(coluna, page)
-        page.update()
-    elif str(row.controls[0].value) == "Sips":
-        row.controls[1].src = f"../Sips.jpeg"
-    elif str(row.controls[0].value) == "Toth":
-        row.controls[1].src = f"../Toth.jpeg"
-    elif str(row.controls[0].value) == "Langmuir Multissítios":
-        row.controls[1].src = f"../Multissitios.jpeg"
-    row.controls[1].visible = True
-    coluna.update()
+    seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
 
 
-def main(page, off_sync):
-    if off_sync:
-        off_sync = False
-        principal = ft.Column(scroll=ft.ScrollMode.AUTO, alignment=ft.MainAxisAlignment.START, spacing=25)
-        def seleciona_arquivo(e: ft.FilePickerResultEvent):
-            sync_exp_list.clear()
-            if e.files:
-                for f in e.files:
-                    db_name = f.path
-                    sync_exp_list.append(db.__load_db_pack_experiment__(db_name))
-                __update_page__(principal)
+    if len(coluna_principal.controls) > 1:
+        coluna_principal.controls.remove(coluna_principal.controls[1])
 
-        seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
+    fp = ft.ElevatedButton("Carregar Experimentos", on_click=lambda _: seleciona_arquivo_dialog.pick_files(
+        allowed_extensions=["exp"], allow_multiple=True), width=200)
 
-
-
-        row = ft.Row(controls=[
-            ft.Dropdown(
-                width=200,
-                options=[
-                    ft.dropdown.Option("Langmuir"),
-                    ft.dropdown.Option("Sips"),
-                    ft.dropdown.Option("Toth"),
-                    ft.dropdown.Option("Langmuir Multissítios"),
-                ],
-                on_change=lambda _: __onchange(principal, row, page),
-            ),
-            ft.Image(visible=False, width=150, height=70),
-
-        ])
-        principal.controls.insert(0, row)
-        page.overlay.append(seleciona_arquivo_dialog)
-        off_sync = True
-        return principal
+    principal.controls.insert(0, fp)
+    coluna_principal.controls.insert(1, principal)
+    page.overlay.append(seleciona_arquivo_dialog)
+    coluna_principal.update()
 
 
 def __update_page__(principal):

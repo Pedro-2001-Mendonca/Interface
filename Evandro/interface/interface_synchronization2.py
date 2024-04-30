@@ -4,18 +4,17 @@ import pandas as pd
 import math
 import numpy as np
 from flet_core.matplotlib_chart import MatplotlibChart
-from Interface.Evandro.auxiliar import load_excel_file as excel
+from Evandro.auxiliar import load_excel_file as excel
 
-from Interface.Evandro.classes import experiment_class as ec
-from Interface.Evandro.auxiliar import synchronization as sync
-from Interface.Evandro.db import db_experiment as db
+from Evandro.classes import experiment_class as ec
+from Evandro.auxiliar import synchronization as sync
+from Evandro.db import db_experiment as db
 
 import matplotlib.pyplot as plt
 
 input_height = 50
 input_cursor_height = 25
 input_width = 250
-
 button_width = 200
 
 # inputs do leito
@@ -87,7 +86,7 @@ input_column = ft.Column(controls=[container_leito, ft.Divider(thickness=0.5), c
 input_container = ft.Container(content=input_column)
 
 
-def main(page, tab_name):
+def main(page):
     principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
 
     principal.controls.insert(0, input_container)
@@ -120,6 +119,7 @@ def main(page, tab_name):
         vetorTempoy = []
 
         while len(principal.controls) > 2:
+
             principal.controls.remove(principal.controls[2])
 
         excel = pd.read_excel(arquivo)

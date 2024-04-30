@@ -1,43 +1,40 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
 import numpy as np
-from Interface.Evandro.auxiliar import load_excel_file as excel
-from Interface.Evandro.db import db_experiment as db
+from Evandro.auxiliar import load_excel_file as excel
+from Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
 
 sync_exp_list = []
 
 
-def seleciona_arquivo(e: ft.FilePickerResultEvent):
-    sync_exp_list.clear()
-    if e.files:
-        for f in e.files:
-            db_name = f.path
-            sync_exp_list.append(db.__load_db_pack_experiment__(db_name))
-        __update_page()
 
 
-seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
-principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
+def main(page, off_sync):
+    if off_sync:
+        off_sync = False
+        def seleciona_arquivo(e: ft.FilePickerResultEvent):
+            sync_exp_list.clear()
+            if e.files:
+                for f in e.files:
+                    db_name = f.path
+                    sync_exp_list.append(db.__load_db_pack_experiment__(db_name))
+                __update_page__(principal)
+
+        seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
+        principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
+        fp = ft.ElevatedButton("Carregar Experimentos", on_click=lambda _: seleciona_arquivo_dialog.pick_files(
+            allowed_extensions=["exp"],allow_multiple=True), width=200)
+
+        principal.controls.insert(0, fp)
+
+        page.overlay.append(seleciona_arquivo_dialog)
+        off_sync = True
+        return principal
 
 
-def main(linha_principal, page):
 
-    if linha_principal.controls[2] is not None:
-        linha_principal.controls[2].clean()
-        linha_principal.controls.remove(linha_principal.controls[2])
-
-    fp = ft.ElevatedButton("Carregar Experimentos", on_click=lambda _: seleciona_arquivo_dialog.pick_files(
-        allowed_extensions=["exp"],allow_multiple=True), width=200)
-
-    principal.controls.insert(0, fp)
-    linha_principal.controls.append(principal)
-    page.overlay.append(seleciona_arquivo_dialog)
-    linha_principal.update()
-    page.update()
-
-
-def __update_page():
+def __update_page__(principal):
 
     while len(principal.controls) > 1:
         principal.controls.remove(principal.controls[1])
@@ -98,5 +95,4 @@ def __update_page():
     principal.controls.insert(3, vetorCol)
     principal.controls.insert(4, fig_container)
     plt.close()
-
     principal.update()

@@ -1,30 +1,25 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
 
-from Interface.Evandro.auxiliar import load_excel_file as excel
-from Interface.Evandro.db import db_experiment as db
+from Evandro.auxiliar import load_excel_file as excel
+from Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
 
 sync_exp_list = []
 
 
-def seleciona_arquivo(e: ft.FilePickerResultEvent):
-    if e.files != None:
-        for f in e.files:
-            db_name = f.path
-            sync_exp_list.append(db.__load_db_experiment__(db_name))
-        __update_page()
-
-
-seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
-principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
 
 
 def main(linha_principal, page):
+    def seleciona_arquivo(e: ft.FilePickerResultEvent):
+        if e.files != None:
+            for f in e.files:
+                db_name = f.path
+                sync_exp_list.append(db.__load_db_experiment__(db_name))
+            __update_page()
 
-    if linha_principal.controls[2] is not None:
-        linha_principal.controls[2].clean()
-        linha_principal.controls.remove(linha_principal.controls[2])
+    seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
+    principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
 
     fp = ft.ElevatedButton("Carregar Experimento", on_click=lambda _: seleciona_arquivo_dialog.pick_files(
         allowed_extensions=["exp"]), width=200)
@@ -38,6 +33,16 @@ def main(linha_principal, page):
 
 
 def __update_page():
+    def seleciona_arquivo(e: ft.FilePickerResultEvent):
+        if e.files != None:
+            for f in e.files:
+                db_name = f.path
+                sync_exp_list.append(db.__load_db_experiment__(db_name))
+            __update_page()
+
+    seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
+    principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
+
     while len(principal.controls) > 1:
         principal.controls.remove(principal.controls[1])
     vetorCol = ft.Column(controls=None)

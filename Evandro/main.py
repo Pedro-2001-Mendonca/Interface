@@ -15,17 +15,24 @@ from flet_core.matplotlib_chart import MatplotlibChart
 import math
 matplotlib.use("svg")
 
-
+off_sync = True
 Base = declarative_base()
 
 
 def __change_page__(index, LinhaPrincipal, page):
     if index == 0:
-        tbs.__create_tabs__(LinhaPrincipal, page)
+        LinhaPrincipal.controls.remove(LinhaPrincipal.controls[2])
+        LinhaPrincipal.controls.insert(2, tbs.__create_tabs__(page, off_sync))
+        page.update()
     if index == 1:
-        pe.main(LinhaPrincipal, page)
+        LinhaPrincipal.controls.remove(LinhaPrincipal.controls[2])
+        LinhaPrincipal.controls.insert(2, pe.main(page, off_sync))
+        page.update()
     if index == 2:
-        cp.main(LinhaPrincipal, page)
+        LinhaPrincipal.controls.remove(LinhaPrincipal.controls[2])
+        LinhaPrincipal.controls.insert(2, cp.main(page, off_sync))
+        page.update()
+
 
 
 def main(page: ft.Page):
@@ -34,11 +41,11 @@ def main(page: ft.Page):
     page.add(LinhaPrincipal)
 
     rail = ft.NavigationRail(
-        selected_index=0,
+        #selected_index=-1,
         label_type=ft.NavigationRailLabelType.ALL,
         min_width=100,
         min_extended_width=400,
-        # leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
+        leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
         # extended=True,
         group_alignment=-0.9,
         destinations=[
@@ -55,8 +62,10 @@ def main(page: ft.Page):
                 selected_icon_content=ft.Icon(ft.icons.PROPANE_TANK),
                 label_content=ft.Text("Simulação"),
             ),
+
         ],
         on_change=lambda e: __change_page__(e.control.selected_index, LinhaPrincipal, page),
+
     )
 
     LinhaPrincipal = ft.Row([
