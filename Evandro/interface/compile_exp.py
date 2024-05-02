@@ -27,7 +27,6 @@ def main(page, off_sync):
             allowed_extensions=["exp"],allow_multiple=True), width=200)
 
         principal.controls.insert(0, fp)
-
         page.overlay.append(seleciona_arquivo_dialog)
         off_sync = True
         return principal

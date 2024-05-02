@@ -1,9 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import flet as ft
-from Evandro.auxiliar import Tabs as tbs
-from Evandro.utils import dialog
+from Evandro.interface import Tabs as tbs
 
 Base = declarative_base()
 

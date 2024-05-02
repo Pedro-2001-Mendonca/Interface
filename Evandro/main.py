@@ -1,51 +1,46 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import flet as ft
-from auxiliar import Tabs as tbs
+from Evandro.interface import Tabs as tbs
 from interface import pe_head as pe
 from interface import compile_exp as cp
 import matplotlib
-import operator
-import sqlite3
-import numpy as np
-import pandas as pd
-import xlsxwriter
-from flet_core.matplotlib_chart import MatplotlibChart
-import math
+
 matplotlib.use("svg")
 
 off_sync = True
 Base = declarative_base()
 
 
-def __change_page__(index, LinhaPrincipal, page):
+def __change_page__(index, linha_principal, page):
     if index == 0:
-        LinhaPrincipal.controls.remove(LinhaPrincipal.controls[2])
-        LinhaPrincipal.controls.insert(2, tbs.__create_tabs__(page, off_sync))
+        linha_principal.controls.remove(linha_principal.controls[2])
+        linha_principal.controls.insert(2, ft.Container(content=tbs.__create_tabs__(page, off_sync),
+                                                     alignment=ft.alignment.top_left, expand=True))
         page.update()
     if index == 1:
-        LinhaPrincipal.controls.remove(LinhaPrincipal.controls[2])
-        LinhaPrincipal.controls.insert(2, pe.main(page, off_sync))
+        linha_principal.controls.remove(linha_principal.controls[2])
+        linha_principal.controls.insert(2, ft.Container(content=pe.main(page, off_sync),
+                                                        alignment=ft.alignment.top_left, expand=True))
+
         page.update()
     if index == 2:
-        LinhaPrincipal.controls.remove(LinhaPrincipal.controls[2])
-        LinhaPrincipal.controls.insert(2, cp.main(page, off_sync))
+        linha_principal.controls.remove(linha_principal.controls[2])
+        linha_principal.controls.insert(2, ft.Container(content=cp.main(page, off_sync),
+                                                        alignment=ft.alignment.top_left, expand=True))
         page.update()
-
 
 
 def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
-    LinhaPrincipal = ft.Row(controls=None, vertical_alignment=ft.CrossAxisAlignment.START)
-    page.add(LinhaPrincipal)
+    linha_principal = ft.Row(controls=None, vertical_alignment=ft.CrossAxisAlignment.START)
+    page.add(linha_principal)
 
     rail = ft.NavigationRail(
-        #selected_index=-1,
+        # selected_index=0,
         label_type=ft.NavigationRailLabelType.ALL,
         min_width=100,
         min_extended_width=400,
-        leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
+        # leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
         # extended=True,
         group_alignment=-0.9,
         destinations=[
@@ -64,11 +59,11 @@ def main(page: ft.Page):
             ),
 
         ],
-        on_change=lambda e: __change_page__(e.control.selected_index, LinhaPrincipal, page),
+        on_change=lambda e: __change_page__(e.control.selected_index, linha_principal, page),
 
     )
 
-    LinhaPrincipal = ft.Row([
+    linha_principal = ft.Row([
         rail,
         ft.VerticalDivider(width=1),
         ft.Column(controls=None, alignment=ft.MainAxisAlignment.START)
@@ -76,7 +71,7 @@ def main(page: ft.Page):
         expand=True, spacing=20
     )
 
-    page.add(LinhaPrincipal)
+    page.add(linha_principal)
     page.update()
 
 
