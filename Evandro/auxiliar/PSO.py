@@ -21,7 +21,7 @@ def PSO(T, P, qe, Tref, ObjF, Pop_Size, max_iter):
     # Posotion Initialization
     for i in range(Pop_Size):
         position = np.array(
-            [10 * abs(random.random()), abs(random.random()), 100 * abs(random.random()), 0.1 + abs(random.random())])
+            [10 * abs(random.random()), abs(random.random()), 100 * abs(random.random()), 10 * abs(random.random())])
         particle = Particle(position)
 
         # Fitness Update
@@ -77,14 +77,81 @@ def PSO(T, P, qe, Tref, ObjF, Pop_Size, max_iter):
     return swarm_best_position, swarm_best_fitness
 
 
-# Iterate over each objective function and run PSO
-def chama_pso(T, P, qe, Tref, model, pop_size, max_iter):
-    if model == 0:
-        return PSO(T, P, qe, Tref, langmuir, pop_size, max_iter)
-    if model == 1:
-        return PSO(T, P, qe, Tref, sips, pop_size, max_iter)
-    if model == 2:
-        return PSO(T, P, qe, Tref, toth, pop_size, max_iter)
+def PSOmulti(T1, P1, qe1, T2, P2, qe2, Tref, ObjF, Pop_Size, max_iter):
+    particles1 = []
+    particles2 = []
+    # Position Initialization
+    for i in range(Pop_Size):
+
+        position1 = np.array(
+            [100 * abs(random.random()), abs(random.random()), 1000 * abs(random.random()),  10*abs(random.random())])
+        particle1 = Particle(position1)
+
+        position2 = np.array(
+            [100 * abs(random.random()), 10*abs(random.random()), 10000 * abs(random.random()),  10*abs(random.random())])
+        particle2 = Particle(position2)
+
+        # Fitness Update
+        fitness1 = ObjF(position1, T1, P1, qe1, Tref) + abs(position1[0] * position1[3] - position2[0] * position2[3])
+        fitness2 = ObjF(position2, T2, P2, qe2, Tref) + abs(position1[0] * position1[3] - position2[0] * position2[3])
+
+        if i == 0:
+            swarm_best_position1 = position1
+            swarm_best_fitness1 = fitness1
+            swarm_best_position2 = position2
+            swarm_best_fitness2 = fitness2
+
+        particle1.best_position = position1
+        particle1.best_fitness = fitness1
+        particle2.best_position = position2
+        particle2.best_fitness = fitness2
+
+        if fitness1 < swarm_best_fitness1:
+            swarm_best_fitness1 = fitness1
+            swarm_best_position1 = position1
+
+        if fitness2 < swarm_best_fitness2:
+            swarm_best_fitness2 = fitness2
+            swarm_best_position2 = position2
+
+        particles1.append(particle1)
+        particles2.append(particle2)
+
+    # PSO Main Loop
+    for itr in range(max_iter):
+        for index in range(len(particles1)):
+            w = 0.8
+            c1 = 1.2
+            c2 = 1.2
+            r1 = random.random()
+            r2 = random.random()
+            particles1[index].velocity = w * particles1[index].velocity + c1 * r1 * (
+                    particles1[index].best_position - particles1[index].position) + c2 * r2 * (
+                                                 swarm_best_position1 - particles1[index].position)
+            particles1[index].position = particles1[index].position + particles1[index].velocity
+
+            particles2[index].velocity = w * particles2[index].velocity + c1 * r1 * (
+                    particles2[index].best_position - particles2[index].position) + c2 * r2 * (
+                                                 swarm_best_position2 - particles2[index].position)
+            particles2[index].position = particles2[index].position + particles2[index].velocity
+            extra = 0.1*abs(particles1[index].position[0] * particles1[index].position[3] - particles2[index].position[0] * particles2[index].position[3])
+            fitness1 = ObjF(particles1[index].position, T1, P1, qe1, Tref) + extra
+            fitness2 = ObjF(particles2[index].position, T2, P2, qe2, Tref) + extra
+            if fitness1 < particles1[index].best_fitness:
+                particles1[index].best_fitness = fitness1
+                particles1[index].best_position = particles1[index].position
+            if fitness1 < swarm_best_fitness1:
+                swarm_best_fitness1 = fitness1
+                swarm_best_position1 = particles1[index].position
+            if fitness2 < particles2[index].best_fitness:
+                particles2[index].best_fitness = fitness2
+                particles2[index].best_position = particles2[index].position
+            if fitness2 < swarm_best_fitness2:
+                swarm_best_fitness2 = fitness2
+                swarm_best_position2 = particles2[index].position
+        #print(swarm_best_fitness1)
+        #print(swarm_best_fitness2)
+    return swarm_best_position1, swarm_best_fitness1, swarm_best_position2, swarm_best_fitness2
 
 
 def langmuir(x, T, P, qe, Tref):
@@ -99,6 +166,32 @@ def langmuir(x, T, P, qe, Tref):
             result += 100000000
 
     return result
+
+def langmuir_multi(x, T, P, qe, Tref):
+    result = 0
+    for i in range(len(P)):
+        try:
+            #conta = x[0] * x[1] * P[i] * math.exp(x[2] * ((1 / T[i]) - (1 / Tref))) * ((1 - (qe[i] / x[0])) ** x[3])
+            x0 = 0
+            result = result + (qe[i] - newton(x, x0, T[i], P[i], Tref)) ** 2
+        except:
+            result += 100000000
+
+    return result
+
+
+def funcao_langmuir(x, x0, Ti, Pi, Tref):
+    return x0 - x[0] * x[1] * Pi * math.exp(x[2] * ((1 / Ti) - (1 / Tref))) * ((1 - (x0 / x[0])) ** x[3])
+
+
+def derivada_langmuir(x, x0, Ti, Pi, Tref):
+    return 1 + x[0] * x[1] * Pi * math.exp(x[2] * ((1 / Ti) - (1 / Tref))) * x[3] * ((1 - (x0 / x[0])) ** (x[3] - 1)) / x[0]
+
+
+def newton(x, x0, Ti, Pi, Tref):
+    for i in range(10):
+        x0 = x0 - funcao_langmuir(x, x0, Ti, Pi, Tref) / derivada_langmuir(x, x0, Ti, Pi, Tref)
+    return x0
 
 
 def sips(x, T, P, qe, Tref):
@@ -119,14 +212,9 @@ def toth(x, T, P, qe, Tref):
     result = 0
     for i in range(len(P)):
         try:
-            conta = (x[0] * math.exp(x[2] * ((1 / T[i]) - (1 / Tref))) * x[1] * P[i]) / ((
-                                                                                                 1 + (math.exp(x[2] * (
-                                                                                                 1 / T[
-                                                                                             i] - 1 / Tref)) * x[
-                                                                                                          1] * P[
-                                                                                                          i]) ** (
-                                                                                                     x[3])) ** (
-                                                                                                 1 / x[3]))
+            conta = (x[0] * math.exp(x[2] * ((1 / T[i]) - (1 / Tref)))
+                     * x[1] * P[i]) / ((1 + (math.exp(x[2] * (1 / T[i] - 1 / Tref))
+                                             * x[1] * P[i]) ** (x[3])) ** (1 / x[3]))
             result = result + (qe[i] - conta) ** 2
 
         except:
@@ -135,17 +223,54 @@ def toth(x, T, P, qe, Tref):
     return result
 
 
+TCH4 = [298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15,
+        298.15, 298.15, 298.15, 298.15, 298.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15,
+        308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15,
+        323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15,
+        323.15, 323.15, 323.15, 323.15]
 
-T = [298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15,
-     308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15,
-     323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15]
+XCH4 = [0, 0.0405, 0.1203, 0.191, 0.5515, 1.25, 1.65, 2.1, 3.06, 3.45, 4.25, 6.31, 8.19, 10.7, 11.8, 14.1, 17.2, 18.9,
+        0, 0.0525, 0.1115, 0.204, 0.4007, 0.8516, 1.35, 1.9, 2.8, 3.1, 3.5, 4.45, 5.85, 6.95, 7.8, 8.75, 11.1, 14.8,
+        0, 0.0603, 0.1215, 0.22, 0.3302, 0.4612, 0.5505, 0.801, 1.15, 1.65, 2.4, 3.4, 4, 5.1, 5.05, 6.35, 7.8, 8.65]
 
-X = [0, 0.0118, 0.061, 0.2905, 0.861, 1.6, 3.1, 5.25, 10.15, 14.45, 19.35, 22.8, 26.6, 32, 0, 0.0126, 0.0407, 0.0905,
-     0.1325, 0.2007, 0.4515, 0.9503, 1.6, 2.2, 2.8, 3.7, 4.85, 5.7, 0, 0.0106, 0.0214, 0.0501, 0.0907, 0.2423, 0.422,
-     0.7503, 1.45, 2.7, 3.9, 5.45, 7.05, 8.5]
+YCH4 = [0, 0.024, 0.089, 0.131, 0.326, 0.712, 0.877, 1.12, 1.474, 1.617, 1.83, 2.357, 2.726, 3.06, 3.26, 3.53, 3.834,
+        3.991, 0, 0.022, 0.064, 0.109, 0.210, 0.415, 0.623, 0.823, 1.133, 1.232, 1.360, 1.618, 1.931, 2.154, 2.342,
+        2.466, 2.792, 3.201, 0, 0.017, 0.052, 0.09, 0.14, 0.196, 0.227, 0.312, 0.432, 0.59, 0.731, 1.009, 1.193,
+        1.423, 1.395, 1.653, 1.929, 2.077]
 
-Y = [0, 1.147, 2.249, 3.659, 4.5, 5.06, 5.58, 6.04, 6.52, 6.92, 6.96, 7.09, 7.22, 7.372, 0, 0.825, 1.458, 2.06, 2.4,
-     2.734, 3.38, 4.05, 4.49, 4.74, 4.96, 5.167, 5.315, 5.399, 0, 0.356, 0.529, 1.06, 1.43, 2.09, 2.49, 2.9, 3.4, 3.915,
-     4.1, 4.329, 4.532, 4.74]
+TCO2 = [298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15, 298.15,
+        308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15, 308.15,
+        323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15, 323.15]
 
-print(chama_pso(T, X, Y, 273.15, 2, pop_size=200, max_iter=2000))
+XCO2 = [0, 0.0118, 0.061, 0.2905, 0.861, 1.6, 3.1, 5.25, 10.15, 14.45, 19.35, 22.8, 26.6, 32, 0, 0.0126, 0.0407, 0.0905,
+        0.1325, 0.2007, 0.4515, 0.9503, 1.6, 2.2, 2.8, 3.7, 4.85, 5.7, 0, 0.0106, 0.0214, 0.0501, 0.0907, 0.2423, 0.422,
+        0.7503, 1.45, 2.7, 3.9, 5.45, 7.05, 8.5]
+
+YCO2 = [0, 1.147, 2.249, 3.659, 4.5, 5.06, 5.58, 6.04, 6.52, 6.92, 6.96, 7.09, 7.22, 7.372, 0, 0.825, 1.458, 2.06, 2.4,
+        2.734, 3.38, 4.05, 4.49, 4.74, 4.96, 5.167, 5.315, 5.399, 0, 0.356, 0.529, 1.06, 1.43, 2.09, 2.49, 2.9, 3.4,
+        3.915,
+        4.1, 4.329, 4.532, 4.74]
+
+
+# Iterate over each objective function and run PSO
+def chama_pso(T, P, qe, Tref, model, pop_size, max_iter):
+    if model == 0:
+        return PSO(T, P, qe, Tref, langmuir, pop_size, max_iter)
+    if model == 1:
+        return PSO(T, P, qe, Tref, sips, pop_size, max_iter)
+    if model == 2:
+        return PSO(T, P, qe, Tref, toth, pop_size, max_iter)
+
+
+def chama_pso_multi(T1, P1, qe1, T2, P2, qe2, Tref, model, pop_size, max_iter):
+    if model == 4:
+        return PSOmulti(T1, P1, qe1, T2, P2, qe2, Tref, langmuir_multi, pop_size, max_iter)
+
+
+print(chama_pso_multi(TCH4, XCH4, YCH4, TCO2, XCO2, YCO2, 273.15, 4, pop_size=200, max_iter=500))
+
+#for i in range(len(TCH4)):
+#    print(newton([28.4019, 0.03546, 1579.19, 6.7442], 1, TCH4[i], XCH4[i], 273.15))
+
+#for i in range(len(TCO2)):
+   # print(newton([16.7390, 153.2670, 7509.6020, 12.1219], 1, TCO2[i], XCO2[i], 273.15))
