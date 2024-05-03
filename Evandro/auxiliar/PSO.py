@@ -2,8 +2,9 @@ import random
 import math
 import numpy as np
 import warnings
+import time as t
 
-warnings.filterwarnings("error")
+# warnings.filterwarnings("error")
 
 
 # Define Class Particles
@@ -266,8 +267,15 @@ def chama_pso_multi(T1, P1, qe1, T2, P2, qe2, Tref, model, pop_size, max_iter):
     if model == 4:
         return PSOmulti(T1, P1, qe1, T2, P2, qe2, Tref, langmuir_multi, pop_size, max_iter)
 
-
-print(chama_pso_multi(TCH4, XCH4, YCH4, TCO2, XCO2, YCO2, 273.15, 4, pop_size=200, max_iter=500))
+# inicio = t.time()
+# print(chama_pso(TCH4, XCH4, YCH4,273.15, 0, 100, 100))
+# fim = t.time()
+# print(fim - inicio)
+#
+# inicio = t.time()
+# print(chama_pso_multi(TCH4, XCH4, YCH4, TCO2, XCO2, YCO2, 273.15, 4, pop_size=100, max_iter=100))
+# fim = t.time()
+# print(fim - inicio)
 
 #for i in range(len(TCH4)):
 #    print(newton([28.4019, 0.03546, 1579.19, 6.7442], 1, TCH4[i], XCH4[i], 273.15))

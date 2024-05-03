@@ -5,7 +5,7 @@ import math
 import matplotlib.pyplot as plt
 from flet.matplotlib_chart import MatplotlibChart
 matplotlib.use("svg")
-from Evandro.auxiliar import synchronization as itp
+from Interface.Evandro.auxiliar import synchronization as itp
 import xlsxwriter
 
 

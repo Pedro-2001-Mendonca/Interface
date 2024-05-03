@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 import flet as ft
-from Evandro.interface import Tabs as tbs
+from Interface.Evandro.interface import Tabs as tbs
 
 Base = declarative_base()
 

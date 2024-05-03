@@ -1,12 +1,101 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
 import numpy as np
-from Evandro.auxiliar import load_excel_file as excel
-from Evandro.db import db_experiment as db
+from Interface.Evandro.auxiliar import load_excel_file as excel
+from Interface.Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
-from Evandro.interface import pe_body as pb
+from Interface.Evandro.interface import pe_body as pb
+
+input_height = 50
+input_cursor_height = 25
+input_width = 250
+button_width = 200
 
 sync_exp_list = []
+
+list_T = []
+list_P = []
+list_q = []
+
+input_n_iter = ft.TextField(label="Número de iterações", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width, value= "10")
+input_n_particulas = ft.TextField(label="Número de partículas", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width, value= "100")
+input_qmax_min = ft.TextField(label="Valor mínimo de qmax", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_qmax_max = ft.TextField(label="Valor máximo de qmax", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_k1_min = ft.TextField(label="Valor mínimo de K1", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_k1_max = ft.TextField(label="Valor máximo de K1", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_k2_min = ft.TextField(label="Valor mínimo de K2", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_k2_max = ft.TextField(label="Valor máximo de K2", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_alpha_min = ft.TextField(label="Valor mínimo de alpha", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_alpha_max = ft.TextField(label="Valor máximo de alpha", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_n_min = ft.TextField(label="Valor mínimo de n", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_n_max = ft.TextField(label="Valor máximo de n", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_ns_min = ft.TextField(label="Valor mínimo de ns", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+input_ns_max = ft.TextField(label="Valor máximo de ns", height=input_height,
+                         cursor_height=input_cursor_height, width=input_width)
+
+def cria_linha(index):
+    linha1 = ft.Row(controls=[
+        input_n_iter,
+        input_n_particulas
+    ])
+    linha2 = ft.Row(controls=[
+        input_qmax_min,
+        input_qmax_max,
+    ])
+    linha3 = ft.Row(controls=[
+        input_k1_min,
+        input_k1_max,
+    ])
+    linha4 = ft.Row(controls=[
+        input_k2_min,
+        input_k2_max,
+    ])
+    coluna1 = ft.Column(controls=[
+        linha1,
+        ft.Divider(),
+        linha2,
+        linha3,
+        linha4
+    ])
+
+    if index == 0:
+        pass
+    elif index == 1:
+        coluna1.controls.append(
+            ft.Row(controls=[
+                input_ns_min,
+                input_ns_max
+            ])
+        )
+    elif index == 2:
+        coluna1.controls.append(
+            ft.Row(controls=[
+                input_n_min,
+                input_n_max
+            ])
+        )
+    elif index == 3:
+        coluna1.controls.append(
+            ft.Row(controls=[
+                input_alpha_min,
+                input_alpha_max
+            ])
+        )
+
+    return coluna1
 
 
 
@@ -16,14 +105,24 @@ def __onchange(coluna, row, page):
 
     if str(row.controls[0].value) == "Langmuir":
         row.controls[1].src = f"../Langmuir.jpeg"
-        pb.main(coluna, page)
+        coluna.controls.insert(1, cria_linha(0))
+        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
         page.update()
     elif str(row.controls[0].value) == "Sips":
         row.controls[1].src = f"../Sips.jpeg"
+        coluna.controls.insert(1, cria_linha(1))
+        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
+        page.update()
     elif str(row.controls[0].value) == "Toth":
         row.controls[1].src = f"../Toth.jpeg"
+        coluna.controls.insert(1, cria_linha(2))
+        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
+        page.update()
     elif str(row.controls[0].value) == "Langmuir Multissítios":
         row.controls[1].src = f"../Multissitios.jpeg"
+        coluna.controls.insert(1, cria_linha(3))
+        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
+        page.update()
     row.controls[1].visible = True
     coluna.update()
 
@@ -32,17 +131,6 @@ def main(page, off_sync):
     if off_sync:
         off_sync = False
         principal = ft.Column(scroll=ft.ScrollMode.AUTO, alignment=ft.MainAxisAlignment.START, spacing=25)
-        def seleciona_arquivo(e: ft.FilePickerResultEvent):
-            sync_exp_list.clear()
-            if e.files:
-                for f in e.files:
-                    db_name = f.path
-                    sync_exp_list.append(db.__load_db_pack_experiment__(db_name))
-                __update_page__(principal)
-
-        seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
-
-
 
         row = ft.Row(controls=[
             ft.Dropdown(
@@ -59,70 +147,6 @@ def main(page, off_sync):
 
         ])
         principal.controls.insert(0, row)
-        page.overlay.append(seleciona_arquivo_dialog)
         off_sync = True
         return principal
 
-
-def __update_page__(principal):
-    while len(principal.controls) > 1:
-        principal.controls.remove(principal.controls[1])
-    new_list = sorted(sync_exp_list, key=lambda x: x[0])
-    vetorCol = ft.Column(controls=None)
-    vetorCol.controls.clear()
-    newheigth = 35
-    vetorLinha = [ft.TextField("Temperatura (K)", text_align=ft.TextAlign.CENTER, width=150,
-                               height=newheigth,
-                               text_vertical_align=-1,
-                               content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                               border=ft.InputBorder.NONE, read_only=True),
-                  ft.TextField("Pressão (bar)", text_align=ft.TextAlign.CENTER, width=150,
-                               height=newheigth,
-                               text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                               border=ft.InputBorder.NONE, read_only=True),
-                  ft.TextField("q (mol/kg)", text_align=ft.TextAlign.CENTER, width=150,
-                               height=newheigth,
-                               text_vertical_align=-1, content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                               border=ft.InputBorder.NONE, read_only=True)]
-
-    vetorCol.controls.insert(0, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
-
-    list_T = []
-    list_P = []
-    list_q = []
-    for i in range(len(new_list)):
-        vetorLinha = [
-            ft.TextField(round(new_list[i][0], 5), text_align=ft.TextAlign.CENTER, width=150,
-                         height=newheigth,
-                         text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)),
-            ft.TextField(round(new_list[i][1], 5), text_align=ft.TextAlign.CENTER,
-                         width=150,
-                         height=newheigth,
-                         text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)),
-            ft.TextField(round(new_list[i][2], 5), text_align=ft.TextAlign.CENTER, width=150,
-                         height=newheigth,
-                         text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2))]
-        list_T.insert(i, new_list[i][0])
-        list_P.insert(i, new_list[i][1])
-        list_q.insert(i, new_list[i][2])
-
-        vetorCol.controls.insert(i + 1, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
-
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-
-    ax.scatter(list_T, list_P, list_q, c=list_q, marker="o", cmap="seismic")
-
-    ax.set_xlabel('T (K)')
-    ax.set_ylabel('P (bar)')
-    ax.set_zlabel('q (mol/kg)')
-
-    grafico = MatplotlibChart(fig.figure)
-    row_figure = ft.Row([grafico])
-    fig_container = ft.Container(content=row_figure, width=1000, height=400, )
-
-    principal.controls.insert(3, vetorCol)
-    principal.controls.insert(4, fig_container)
-    plt.close()
-
-    principal.update()

@@ -1,5 +1,5 @@
 import sqlite3
-from Evandro.classes import experiment_class as ec
+from Interface.Evandro.classes import experiment_class as ec
 
 
 ns_exp = ec.NotSynchronizedExperiment
