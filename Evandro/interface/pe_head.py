@@ -18,33 +18,46 @@ list_P = []
 list_q = []
 
 input_n_iter = ft.TextField(label="Número de iterações", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width, value= "1000")
+                            cursor_height=input_cursor_height, width=input_width, value="100")
 input_n_particulas = ft.TextField(label="Número de partículas", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width, value= "100")
+                                  cursor_height=input_cursor_height, width=input_width, value="100")
 input_qmax_min = ft.TextField(label="Valor mínimo de qmax", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                              cursor_height=input_cursor_height, width=input_width)
+input_qmax_min.value = 0
 input_qmax_max = ft.TextField(label="Valor máximo de qmax", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                              cursor_height=input_cursor_height, width=input_width)
+input_qmax_max.value = 50
 input_k1_min = ft.TextField(label="Valor mínimo de K1", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                            cursor_height=input_cursor_height, width=input_width)
+input_k1_min.value = 0
 input_k1_max = ft.TextField(label="Valor máximo de K1", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                            cursor_height=input_cursor_height, width=input_width)
+input_k1_max.value = 10
 input_k2_min = ft.TextField(label="Valor mínimo de K2", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                            cursor_height=input_cursor_height, width=input_width)
+input_k2_min.value = 0
 input_k2_max = ft.TextField(label="Valor máximo de K2", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                            cursor_height=input_cursor_height, width=input_width)
+input_k2_max.value = 1000
 input_alpha_min = ft.TextField(label="Valor mínimo de alpha", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                               cursor_height=input_cursor_height, width=input_width)
+input_alpha_min.value = 0
 input_alpha_max = ft.TextField(label="Valor máximo de alpha", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                               cursor_height=input_cursor_height, width=input_width)
+input_alpha_max.value = 10
 input_n_min = ft.TextField(label="Valor mínimo de n", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                           cursor_height=input_cursor_height, width=input_width)
+input_n_min.value = 0.1
 input_n_max = ft.TextField(label="Valor máximo de n", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                           cursor_height=input_cursor_height, width=input_width)
+input_n_max.value = 10
 input_ns_min = ft.TextField(label="Valor mínimo de ns", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                            cursor_height=input_cursor_height, width=input_width)
+input_ns_min.value = 0.1
 input_ns_max = ft.TextField(label="Valor máximo de ns", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width)
+                            cursor_height=input_cursor_height, width=input_width)
+input_ns_max.value = 10
+
 
 def cria_linha(index):
     linha1 = ft.Row(controls=[
@@ -64,12 +77,13 @@ def cria_linha(index):
         input_k2_max,
     ])
     coluna1 = ft.Column(controls=[
+        ft.Divider(),
         linha1,
         ft.Divider(),
         linha2,
         linha3,
         linha4
-    ])
+    ], spacing=15)
 
     if index == 0:
         pass
@@ -98,32 +112,40 @@ def cria_linha(index):
     return coluna1
 
 
-
-
-
 def __onchange(coluna, row, page):
-
     if str(row.controls[0].value) == "Langmuir":
-        row.controls[1].src = f"../Langmuir.jpeg"
+        row.controls[1].content.src = f"../images/langmuir.svg"
+        row.controls[1].width = 400
         coluna.controls.insert(1, cria_linha(0))
-        pb.main(coluna, page, list_T, list_P, list_q, 0, input_n_particulas, input_n_iter)
+        parameters = [input_qmax_min.value, input_qmax_max.value, input_k1_min.value, input_k1_max.value,
+                      input_k2_min.value, input_k2_max.value]
+        pb.main(coluna, page, list_T, list_P, list_q, 0, input_n_particulas, input_n_iter, parameters)
         page.update()
     elif str(row.controls[0].value) == "Sips":
-        row.controls[1].src = f"../Sips.jpeg"
+        row.controls[1].content.src = f"../images/sips.svg"
+        row.controls[1].width = 450
         coluna.controls.insert(1, cria_linha(1))
-        pb.main(coluna, page, list_T, list_P, list_q, 1, input_n_particulas, input_n_iter)
+        parameters = [input_qmax_min.value, input_qmax_max.value, input_k1_min.value, input_k1_max.value,
+                      input_k2_min.value, input_k2_max.value, input_ns_min.value, input_ns_max.value]
+        pb.main(coluna, page, list_T, list_P, list_q, 1, input_n_particulas, input_n_iter, parameters)
         page.update()
     elif str(row.controls[0].value) == "Toth":
-        row.controls[1].src = f"../Toth.jpeg"
+        row.controls[1].content.src = f"../images/toth.svg"
+        row.controls[1].width = 450
         coluna.controls.insert(1, cria_linha(2))
-        pb.main(coluna, page, list_T, list_P, list_q, 2, input_n_particulas, input_n_iter)
+        parameters = [input_qmax_min.value, input_qmax_max.value, input_k1_min.value, input_k1_max.value,
+                      input_k2_min.value, input_k2_max.value, input_n_min.value, input_n_max.value]
+        pb.main(coluna, page, list_T, list_P, list_q, 2, input_n_particulas, input_n_iter, parameters)
         page.update()
     elif str(row.controls[0].value) == "Langmuir Multissítios":
-        row.controls[1].src = f"../Multissitios.jpeg"
+        row.controls[1].content.src = f"../images/multissitios.svg"
+        row.controls[1].width = 500
         coluna.controls.insert(1, cria_linha(3))
-        pb.main(coluna, page, list_T, list_P, list_q, 0, input_n_particulas, input_n_iter)
+        parameters = [input_qmax_min.value, input_qmax_max.value, input_k1_min.value, input_k1_max.value,
+                      input_k2_min.value, input_k2_max.value, input_alpha_min.value, input_alpha_max.value]
+        pb.main(coluna, page, list_T, list_P, list_q, 0, input_n_particulas, input_n_iter, parameters)
         page.update()
-    row.controls[1].visible = True
+    row.controls[1].content.visible = True
     coluna.update()
 
 
@@ -143,10 +165,10 @@ def main(page, off_sync):
                 ],
                 on_change=lambda _: __onchange(principal, row, page),
             ),
-            ft.Image(visible=False, width=150, height=70),
-
-        ])
+            ft.Container(content=ft.Image(visible=False, width=100, height=70, fit=ft.ImageFit.CONTAIN, ),
+                         margin=ft.margin.only(left=50)),
+            ft.Container(width=20)
+        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, spacing=25)
         principal.controls.insert(0, row)
         off_sync = True
         return principal
-

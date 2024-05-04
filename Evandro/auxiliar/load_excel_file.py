@@ -32,9 +32,6 @@ def __seleciona_arquivo__(e: ft.FilePickerResultEvent):
             elif col == 'yCH4' and value >= 0:
                 vetory.append(value)
 
-def __load_nSync__(linha_principal):
-    return 0
-
 
 def __export__(nome, sync_exp):
     if ".xlsx" in nome:

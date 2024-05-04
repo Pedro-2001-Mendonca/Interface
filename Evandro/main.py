@@ -15,17 +15,20 @@ off_sync = True
 
 def __change_page__(index, linha_principal, page):
     if index == 0:
+        page.overlay.clear()
         linha_principal.controls.remove(linha_principal.controls[2])
         linha_principal.controls.insert(2, ft.Container(content=tbs.__create_tabs__(page, off_sync),
                                                      alignment=ft.alignment.top_left, expand=True))
         page.update()
     if index == 1:
+        page.overlay.clear()
         linha_principal.controls.remove(linha_principal.controls[2])
         linha_principal.controls.insert(2, ft.Container(content=pe.main(page, off_sync),
                                                         alignment=ft.alignment.top_left, expand=True))
 
         page.update()
     if index == 2:
+        page.overlay.clear()
         linha_principal.controls.remove(linha_principal.controls[2])
         linha_principal.controls.insert(2, ft.Container(content=cp.main(page, off_sync),
                                                         alignment=ft.alignment.top_left, expand=True))
@@ -33,7 +36,12 @@ def __change_page__(index, linha_principal, page):
 
 
 def main(page: ft.Page):
-    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme = ft.Theme(
+        # changing theme colors to have white dialog
+        color_scheme=ft.ColorScheme(
+            surface_tint=ft.colors.WHITE,
+        ),
+    )
     linha_principal = ft.Row(controls=None, vertical_alignment=ft.CrossAxisAlignment.START)
     page.add(linha_principal)
 
