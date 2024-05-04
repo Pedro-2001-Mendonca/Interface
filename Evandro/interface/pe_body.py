@@ -1,18 +1,19 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
-import numpy as np
-from Interface.Evandro.auxiliar import load_excel_file as excel
-from Interface.Evandro.db import db_experiment as db
-import matplotlib.pyplot as plt
-from Interface.Evandro.auxiliar import PSO as pso
 
+
+import numpy as np
+from Evandro.auxiliar import load_excel_file as excel
+from Evandro.db import db_experiment as db
+import matplotlib.pyplot as plt
+from Evandro.auxiliar import PSO as pso
 
 sync_exp_list = []
 
 
-
 def main(coluna_principal, page, list_T, list_P, list_q, model, pop_size, max_iter):
     principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
+
     def seleciona_arquivo(e: ft.FilePickerResultEvent):
         sync_exp_list.clear()
         if e.files:
@@ -23,26 +24,25 @@ def main(coluna_principal, page, list_T, list_P, list_q, model, pop_size, max_it
 
     seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
 
-
     while len(coluna_principal.controls) > 2:
         coluna_principal.controls.remove(coluna_principal.controls[2])
 
     fp = ft.ElevatedButton("Carregar Experimentos", on_click=lambda _: seleciona_arquivo_dialog.pick_files(
         allowed_extensions=["exp"], allow_multiple=True), width=200)
-    btn_pso = ft.ElevatedButton("Estimar parâmetros", width = 200, on_click= lambda _: print(pso.chama_pso(list_T, list_P, list_q, 273.15,
-                                                                                                     model, pop_size, max_iter)))
+    btn_pso = ft.ElevatedButton("Estimar parâmetros", width=200,
+                                on_click=lambda _: print(pso.chama_pso(list_T, list_P, list_q, 273.15,
+                                                                       model, int(pop_size.value),
+                                                                       int(max_iter.value))))
 
     linha_botoes = ft.Row(controls=[
         fp,
         btn_pso
     ])
 
-
     principal.controls.insert(0, linha_botoes)
     coluna_principal.controls.insert(2, principal)
     page.overlay.append(seleciona_arquivo_dialog)
     coluna_principal.update()
-
 
 
 def __update_page__(principal, list_T, list_P, list_q):
@@ -93,12 +93,12 @@ def __update_page__(principal, list_T, list_P, list_q):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
 
-    ax.scatter(list_T, list_P, list_q, c=list_q, marker="o", cmap="seismic")
-
-    ax.set_xlabel('T (K)')
-    ax.set_ylabel('P (bar)')
+    ax.view_init(elev=25, azim=215, roll=0)
+    ax.grid(False)
+    ax.set_xlabel('Temperatura (K)')
+    ax.set_ylabel('Pressão (bar)')
     ax.set_zlabel('q (mol/kg)')
-
+    ax.scatter(list_T, list_P, list_q, c=list_q, marker="o", cmap="rainbow")
     grafico = MatplotlibChart(fig.figure)
     row_figure = ft.Row([grafico])
     fig_container = ft.Container(content=row_figure, width=1000, height=400, )

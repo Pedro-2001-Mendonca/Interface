@@ -1,10 +1,10 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
 import numpy as np
-from Interface.Evandro.auxiliar import load_excel_file as excel
-from Interface.Evandro.db import db_experiment as db
+from Evandro.auxiliar import load_excel_file as excel
+from Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
-from Interface.Evandro.interface import pe_body as pb
+from Evandro.interface import pe_body as pb
 
 input_height = 50
 input_cursor_height = 25
@@ -18,7 +18,7 @@ list_P = []
 list_q = []
 
 input_n_iter = ft.TextField(label="Número de iterações", height=input_height,
-                         cursor_height=input_cursor_height, width=input_width, value= "10")
+                         cursor_height=input_cursor_height, width=input_width, value= "1000")
 input_n_particulas = ft.TextField(label="Número de partículas", height=input_height,
                          cursor_height=input_cursor_height, width=input_width, value= "100")
 input_qmax_min = ft.TextField(label="Valor mínimo de qmax", height=input_height,
@@ -106,22 +106,22 @@ def __onchange(coluna, row, page):
     if str(row.controls[0].value) == "Langmuir":
         row.controls[1].src = f"../Langmuir.jpeg"
         coluna.controls.insert(1, cria_linha(0))
-        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
+        pb.main(coluna, page, list_T, list_P, list_q, 0, input_n_particulas, input_n_iter)
         page.update()
     elif str(row.controls[0].value) == "Sips":
         row.controls[1].src = f"../Sips.jpeg"
         coluna.controls.insert(1, cria_linha(1))
-        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
+        pb.main(coluna, page, list_T, list_P, list_q, 1, input_n_particulas, input_n_iter)
         page.update()
     elif str(row.controls[0].value) == "Toth":
         row.controls[1].src = f"../Toth.jpeg"
         coluna.controls.insert(1, cria_linha(2))
-        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
+        pb.main(coluna, page, list_T, list_P, list_q, 2, input_n_particulas, input_n_iter)
         page.update()
     elif str(row.controls[0].value) == "Langmuir Multissítios":
         row.controls[1].src = f"../Multissitios.jpeg"
         coluna.controls.insert(1, cria_linha(3))
-        pb.main(coluna, page, list_T, list_P, list_q, 0, int(input_n_particulas.value), int(input_n_iter.value))
+        pb.main(coluna, page, list_T, list_P, list_q, 0, input_n_particulas, input_n_iter)
         page.update()
     row.controls[1].visible = True
     coluna.update()

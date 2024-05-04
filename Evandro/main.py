@@ -1,14 +1,16 @@
 from sqlalchemy.ext.declarative import declarative_base
 import flet as ft
-from Interface.Evandro.interface import Tabs as tbs
+from Evandro.interface import Tabs as tbs
 from interface import pe_head as pe
 from interface import compile_exp as cp
 import matplotlib
+import warnings
+
+#warnings.filterwarnings("ignore")
 
 matplotlib.use("svg")
 
 off_sync = True
-Base = declarative_base()
 
 
 def __change_page__(index, linha_principal, page):

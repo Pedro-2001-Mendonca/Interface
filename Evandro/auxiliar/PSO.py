@@ -4,8 +4,6 @@ import numpy as np
 import warnings
 import time as t
 
-# warnings.filterwarnings("error")
-
 
 # Define Class Particles
 class Particle:
@@ -22,7 +20,8 @@ def PSO(T, P, qe, Tref, ObjF, Pop_Size, max_iter):
     # Posotion Initialization
     for i in range(Pop_Size):
         position = np.array(
-            [10 * abs(random.random()), abs(random.random()), 100 * abs(random.random()), 10 * abs(random.random())])
+            [10 * abs(random.random()), abs(random.random()), 100 * abs(random.random()),
+             0.1 + 10 * abs(random.random())])
         particle = Particle(position)
 
         # Fitness Update
@@ -85,11 +84,13 @@ def PSOmulti(T1, P1, qe1, T2, P2, qe2, Tref, ObjF, Pop_Size, max_iter):
     for i in range(Pop_Size):
 
         position1 = np.array(
-            [100 * abs(random.random()), abs(random.random()), 1000 * abs(random.random()),  10*abs(random.random())])
+            [100 * abs(random.random()), abs(random.random()), 1000 * abs(random.random()),
+             0.1 + 10 * abs(random.random())])
         particle1 = Particle(position1)
 
         position2 = np.array(
-            [100 * abs(random.random()), 10*abs(random.random()), 10000 * abs(random.random()),  10*abs(random.random())])
+            [100 * abs(random.random()), 10 * abs(random.random()), 10000 * abs(random.random()),
+             10 * abs(random.random())])
         particle2 = Particle(position2)
 
         # Fitness Update
@@ -135,7 +136,9 @@ def PSOmulti(T1, P1, qe1, T2, P2, qe2, Tref, ObjF, Pop_Size, max_iter):
                     particles2[index].best_position - particles2[index].position) + c2 * r2 * (
                                                  swarm_best_position2 - particles2[index].position)
             particles2[index].position = particles2[index].position + particles2[index].velocity
-            extra = 0.1*abs(particles1[index].position[0] * particles1[index].position[3] - particles2[index].position[0] * particles2[index].position[3])
+            extra = 0.1 * abs(
+                particles1[index].position[0] * particles1[index].position[3] - particles2[index].position[0] *
+                particles2[index].position[3])
             fitness1 = ObjF(particles1[index].position, T1, P1, qe1, Tref) + extra
             fitness2 = ObjF(particles2[index].position, T2, P2, qe2, Tref) + extra
             if fitness1 < particles1[index].best_fitness:
@@ -150,8 +153,8 @@ def PSOmulti(T1, P1, qe1, T2, P2, qe2, Tref, ObjF, Pop_Size, max_iter):
             if fitness2 < swarm_best_fitness2:
                 swarm_best_fitness2 = fitness2
                 swarm_best_position2 = particles2[index].position
-        #print(swarm_best_fitness1)
-        #print(swarm_best_fitness2)
+        # print(swarm_best_fitness1)
+        # print(swarm_best_fitness2)
     return swarm_best_position1, swarm_best_fitness1, swarm_best_position2, swarm_best_fitness2
 
 
@@ -159,6 +162,7 @@ def langmuir(x, T, P, qe, Tref):
     result = 0
     for i in range(len(P)):
         try:
+            np.seterr(all='ignore')
             conta = (x[0] * x[1] * math.exp(x[2] * ((1 / T[i]) - (1 / Tref))) * P[i]) / (
                     1 + x[1] * math.exp(x[2] * (1 / T[i] - 1 / Tref)) * P[i])
             result = result + (qe[i] - conta) ** 2
@@ -168,11 +172,13 @@ def langmuir(x, T, P, qe, Tref):
 
     return result
 
+
 def langmuir_multi(x, T, P, qe, Tref):
     result = 0
     for i in range(len(P)):
         try:
-            #conta = x[0] * x[1] * P[i] * math.exp(x[2] * ((1 / T[i]) - (1 / Tref))) * ((1 - (qe[i] / x[0])) ** x[3])
+            np.seterr(all='ignore')
+            # conta = x[0] * x[1] * P[i] * math.exp(x[2] * ((1 / T[i]) - (1 / Tref))) * ((1 - (qe[i] / x[0])) ** x[3])
             x0 = 0
             result = result + (qe[i] - newton(x, x0, T[i], P[i], Tref)) ** 2
         except:
@@ -186,7 +192,8 @@ def funcao_langmuir(x, x0, Ti, Pi, Tref):
 
 
 def derivada_langmuir(x, x0, Ti, Pi, Tref):
-    return 1 + x[0] * x[1] * Pi * math.exp(x[2] * ((1 / Ti) - (1 / Tref))) * x[3] * ((1 - (x0 / x[0])) ** (x[3] - 1)) / x[0]
+    return 1 + x[0] * x[1] * Pi * math.exp(x[2] * ((1 / Ti) - (1 / Tref))) * x[3] * ((1 - (x0 / x[0])) ** (x[3] - 1)) / \
+        x[0]
 
 
 def newton(x, x0, Ti, Pi, Tref):
@@ -199,6 +206,7 @@ def sips(x, T, P, qe, Tref):
     result = 0
     for i in range(len(P)):
         try:
+            np.seterr(all='ignore')
             conta = (x[0] * (math.exp(x[2] * ((1 / T[i]) - (1 / Tref))) * x[1] * P[i]) ** (1 / x[3])) / (
                     1 + (math.exp(x[2] * (1 / T[i] - 1 / Tref)) * x[1] * P[i]) ** (1 / x[3]))
             result = result + (qe[i] - conta) ** 2
@@ -213,10 +221,11 @@ def toth(x, T, P, qe, Tref):
     result = 0
     for i in range(len(P)):
         try:
+            np.seterr(all='ignore')
             conta = (x[0] * math.exp(x[2] * ((1 / T[i]) - (1 / Tref)))
-                     * x[1] * P[i]) / ((1 + (math.exp(x[2] * (1 / T[i] - 1 / Tref))
-                                             * x[1] * P[i]) ** (x[3])) ** (1 / x[3]))
-            result = result + (qe[i] - conta) ** 2
+                     * x[1] * P[i]) / (math.pow(1 + math.pow(math.exp(x[2] * (1 / T[i] - 1 / Tref))
+                                                             * x[1] * P[i], (x[3])), (1 / x[3])))
+            result = result + math.pow(qe[i] - conta, 2)
 
         except:
             result += 100000000
@@ -277,8 +286,8 @@ def chama_pso_multi(T1, P1, qe1, T2, P2, qe2, Tref, model, pop_size, max_iter):
 # fim = t.time()
 # print(fim - inicio)
 
-#for i in range(len(TCH4)):
+# for i in range(len(TCH4)):
 #    print(newton([28.4019, 0.03546, 1579.19, 6.7442], 1, TCH4[i], XCH4[i], 273.15))
 
-#for i in range(len(TCO2)):
-   # print(newton([16.7390, 153.2670, 7509.6020, 12.1219], 1, TCO2[i], XCO2[i], 273.15))
+# for i in range(len(TCO2)):
+# print(newton([16.7390, 153.2670, 7509.6020, 12.1219], 1, TCO2[i], XCO2[i], 273.15))
