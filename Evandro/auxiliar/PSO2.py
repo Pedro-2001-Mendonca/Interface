@@ -15,7 +15,7 @@ class Particle:
 
 
 def pso(page, temp, press, qe, temp_ref, obj_func, n_particles, max_iter, parameters, prog_bar):
-    page.disabled = True
+
     page.update()
     particles = []
     prog_bar.visible = True
@@ -82,9 +82,6 @@ def pso(page, temp, press, qe, temp_ref, obj_func, n_particles, max_iter, parame
                 swarm_best_position = particle.position
     prog_bar.visible = False
     prog_bar.update()
-    page.disabled = False
-
-
     page.update()
     return swarm_best_position, swarm_best_fitness
 
@@ -280,7 +277,8 @@ def chama_pso(page, T, P, qe, Tref, model, pop_size, max_iter, parameters, prog_
         return pso(page, T, P, qe, Tref, sips, pop_size, max_iter, parameters, prog_bar)
     if model == 2:
         return pso(page, T, P, qe, Tref, toth, pop_size, max_iter, parameters, prog_bar)
-
+    if model == 3:
+        return pso(page, T, P, qe, Tref, toth, pop_size, max_iter, parameters, prog_bar)
 
 def chama_pso_multi(T1, P1, qe1, T2, P2, qe2, Tref, model, pop_size, max_iter):
     if model == 4:

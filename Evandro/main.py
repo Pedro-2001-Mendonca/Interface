@@ -50,7 +50,7 @@ def main(page: ft.Page):
         label_type=ft.NavigationRailLabelType.ALL,
         min_width=100,
         min_extended_width=400,
-        # leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
+        #leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Ajuda", on_click=ft.AlertDialog()),
         # extended=True,
         group_alignment=-0.9,
         destinations=[

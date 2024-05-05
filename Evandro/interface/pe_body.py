@@ -1,29 +1,77 @@
 import flet as ft
 import pandas as pd
 from flet_core.matplotlib_chart import MatplotlibChart
-
+import scipy.stats as st
 import numpy as np
 from Evandro.auxiliar import load_excel_file as excel
 from Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
 from Evandro.auxiliar import PSO2 as pso
 from Evandro.interface import resultado as res
+from Evandro.interface import resultado_est as res_est
+
 sync_exp_list = []
-
-
 
 
 def __get_resultados__(page, coluna_principal, list_T, list_P, list_q, Tref,
                        model, pop_size,
-                       max_iter, parameters, prog_column):
+                       max_iter, parameters, prog_column, cbox, input_amostra, contador):
+    input_amostra.update()
+    coluna_principal.disabled = True
+    erroQ_list = []
+    qmax_list = []
+    k1_list = []
+    k2_list = []
+    outro_list = []
+    conteudo = ft.Column(controls=[])
+    if cbox.value:
+        contador.visible = True
+        qmax_list = []
+        k1_list = []
+        k2_list = []
+        outro_list = []
 
-    parametros, erroQ = pso.chama_pso(coluna_principal, list_T, list_P, list_q, Tref,
-                  model, pop_size,
-                  max_iter, parameters, prog_column)
+        for i in range(int(input_amostra.value)):
+
+            parametros, erroQ = pso.chama_pso(coluna_principal, list_T, list_P, list_q, Tref,
+                                              model, pop_size,
+                                              max_iter, parameters, prog_column)
+            qmax_list.append(parametros[0])
+            k1_list.append(parametros[1])
+            k2_list.append(parametros[2])
+            if len(parametros) > 3:
+                outro_list.append(parametros[3])
+            erroQ_list.append(erroQ)
+            contador.value = "Repetições executadas: " + str(i + 1)
+            contador.update()
+        parametros_est = [qmax_list, k1_list, k2_list]
+        if len(outro_list) > 0:
+            parametros_est.append(outro_list)
+
+        conteudo = res_est.main(list_T, list_P, list_q, Tref, model, parametros_est, erroQ_list)
+
+    else:
+
+        parametros, erroQ = pso.chama_pso(coluna_principal, list_T, list_P, list_q, Tref,
+                                          model, pop_size,
+                                          max_iter, parameters, prog_column)
+        qmax_list.clear()
+        k1_list.clear()
+        k2_list.clear()
+        outro_list.clear()
+        qmax_list.append(parametros[0])
+        k1_list.append(parametros[1])
+        k2_list.append(parametros[2])
+        if len(parametros) > 3:
+            outro_list.append(parametros[3])
+        erroQ_list.append(erroQ)
+
+        conteudo = res.main(list_T, list_P, list_q, Tref, model, parameters, [parametros, erroQ])
 
     dlg = ft.AlertDialog(
         title=ft.Text("")
     )
+
     def open_dlg():
         page.dialog = dlg
         dlg.open = True
@@ -38,16 +86,11 @@ def __get_resultados__(page, coluna_principal, list_T, list_P, list_q, Tref,
         dlg_modal.open = False
         page.update()
 
-    conteudo_resultados = ft.Column(controls=[])
-
-    conteudo_resultados.controls.append(ft.Text("Erro Quadrático = " + str(erroQ)))
 
     dlg_modal = ft.AlertDialog(
         modal=True,
-        title=ft.Text("Resultados da Estimação"),
-        content=res.main(page, coluna_principal, list_T, list_P, list_q, Tref,
-                       model, pop_size,
-                       max_iter, parameters, prog_column, [parametros, erroQ]),
+        title=ft.Text("Resultados da Estimação - Amostras: "+str(int(input_amostra.value))),
+        content=conteudo,
         actions=[
             ft.TextButton("Salvar", on_click=close_dlg),
             ft.TextButton("Cancelar", on_click=close_dlg),
@@ -55,12 +98,13 @@ def __get_resultados__(page, coluna_principal, list_T, list_P, list_q, Tref,
         actions_alignment=ft.MainAxisAlignment.END,
 
     )
-
+    coluna_principal.disabled = False
+    contador.visible = False
     open_dlg_modal()
 
 
-
-def main(coluna_principal, page, list_T, list_P, list_q, model, pop_size, max_iter, parameters):
+def main(coluna_principal, page, list_T, list_P, list_q, model, pop_size, max_iter, parameters, Tref, cbox,
+         input_amostra, contador):
     principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
 
     def seleciona_arquivo1(e: ft.FilePickerResultEvent):
@@ -91,11 +135,12 @@ def main(coluna_principal, page, list_T, list_P, list_q, model, pop_size, max_it
     while len(coluna_principal.controls) > 2:
         coluna_principal.controls.remove(coluna_principal.controls[2])
 
-
     btn_pso = ft.ElevatedButton("Estimar parâmetros", width=200,
-                                on_click=lambda _: __get_resultados__(page, coluna_principal, list_T, list_P, list_q, 273.15,
+                                on_click=lambda _: __get_resultados__(page, coluna_principal, list_T, list_P, list_q,
+                                                                      Tref,
                                                                       model, int(pop_size.value),
-                                                                      int(max_iter.value), parameters, prog_column))
+                                                                      int(max_iter.value), parameters, prog_column,
+                                                                      cbox, input_amostra, contador))
     prog_label = ft.Text("Teste", visible=True, size=10)
     prog_bar = ft.ProgressBar(visible=True, width=200, value=0, height=10, border_radius=ft.border_radius.all(30))
     prog_column = ft.Column(controls=[prog_label, prog_bar], spacing=5, visible=False)
@@ -105,8 +150,6 @@ def main(coluna_principal, page, list_T, list_P, list_q, model, pop_size, max_it
         btn_pso,
         prog_column
     ], spacing=20)
-
-
 
     principal.controls.insert(0, linha_botoes)
     coluna_principal.controls.insert(2, principal)
@@ -179,7 +222,6 @@ def __update_page__(principal, list_T, list_P, list_q):
     principal.controls.insert(4, fig_container)
     plt.close()
 
-
     principal.update()
 
 
@@ -203,7 +245,6 @@ def __load_excel(arquivo, list_T, list_P, list_q):
 
 
 def __update_page__2(principal, list_T, list_P, list_q):
-
     while len(principal.controls) > 1:
         principal.controls.remove(principal.controls[1])
     new_list = sorted(sync_exp_list, key=lambda x: x[0])
