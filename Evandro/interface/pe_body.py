@@ -13,6 +13,7 @@ from Evandro.interface import resultado_est as res_est
 sync_exp_list = []
 
 
+
 def __get_resultados__(page, coluna_principal, list_T, list_P, list_q, Tref,
                        model, pop_size,
                        max_iter, parameters, prog_column, cbox, input_amostra, contador):
@@ -89,22 +90,25 @@ def __get_resultados__(page, coluna_principal, list_T, list_P, list_q, Tref,
     def export_file_result(e: ft.FilePickerResultEvent):
         save_file_path = e.path if e.path else None
         if save_file_path:
-            excel.__result_export(save_file_path,list_T, list_P, list_q, Tref, model, parametros_est, erroQ_list)
+            if len(erroQ_list) > 1:
+                excel.__result_export(save_file_path, list_T, list_P, list_q, Tref, model, parametros_est, erroQ_list)
+                close_dlg(e)
+            else:
+                excel.__single_result_export(save_file_path, list_T, list_P, list_q, Tref,
+                                             model, parametros, erroQ)
+                close_dlg(e)
 
     export_file_dialog = ft.FilePicker(on_result=export_file_result)
 
     page.overlay.append(export_file_dialog)
 
-
-
-
     dlg_modal = ft.AlertDialog(
         modal=True,
-        title=ft.Text("Resultados da Estimação - Amostras: "+str(int(input_amostra.value))),
+        title=ft.Text("Resultados da Estimação - Amostras: " + str(int(input_amostra.value))),
         content=conteudo,
         actions=[
             ft.TextButton("Salvar", on_click=lambda _: export_file_dialog.save_file(
-        allowed_extensions=["xlsx"])),
+                allowed_extensions=["xlsx"])),
             ft.TextButton("Cancelar", on_click=close_dlg),
         ],
         actions_alignment=ft.MainAxisAlignment.END,
