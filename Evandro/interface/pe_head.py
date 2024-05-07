@@ -136,7 +136,8 @@ def __onchange(coluna, row, page):
 
     if str(row.controls[0].value) == "Langmuir":
         row.controls[1].content.src = f"../images/langmuir.svg"
-        row.controls[1].width = 400
+        row.controls[1].width = 450
+        #row.controls[1].heigth = 60
         if len(coluna.controls) > 1:
             coluna.controls.remove(coluna.controls[1])
         coluna.controls.insert(1, cria_linha(0))
@@ -200,7 +201,7 @@ def main(page, off_sync):
                          margin=ft.margin.only(left=50)),
             ft.Container(width=20),
 
-        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, spacing=25)
+        ], alignment=ft.MainAxisAlignment.START, spacing=25)
         principal.controls.insert(0, row)
         off_sync = True
         return principal
