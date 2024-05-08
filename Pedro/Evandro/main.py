@@ -12,7 +12,7 @@ matplotlib.use("svg")
 
 off_sync = True
 
-
+print("Testando PUSH")
 def __change_page__(index, linha_principal, page):
     if index == 0:
         page.overlay.clear()
