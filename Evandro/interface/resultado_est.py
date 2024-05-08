@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from flet_core.matplotlib_chart import MatplotlibChart
 import scipy.stats as st
-from Evandro.auxiliar import load_excel_file as excel
+from Interface.Evandro.auxiliar import load_excel_file as excel
 
 
 def main(list_T, list_P, list_q, Tref, model, parameters, resultados):

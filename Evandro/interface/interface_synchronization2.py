@@ -4,11 +4,11 @@ import pandas as pd
 import math
 import numpy as np
 from flet_core.matplotlib_chart import MatplotlibChart
-from Evandro.auxiliar import load_excel_file as excel
+from Interface.Evandro.auxiliar import load_excel_file as excel
 
-from Evandro.classes import experiment_class as ec
-from Evandro.auxiliar import synchronization as sync
-from Evandro.db import db_experiment as db
+from Interface.Evandro.classes import experiment_class as ec
+from Interface.Evandro.auxiliar import synchronization as sync
+from Interface.Evandro.db import db_experiment as db
 
 import matplotlib.pyplot as plt
 

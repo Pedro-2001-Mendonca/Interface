@@ -3,12 +3,12 @@ import pandas as pd
 from flet_core.matplotlib_chart import MatplotlibChart
 import scipy.stats as st
 import numpy as np
-from Evandro.auxiliar import load_excel_file as excel
-from Evandro.db import db_experiment as db
+from Interface.Evandro.auxiliar import load_excel_file as excel
+from Interface.Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
-from Evandro.auxiliar import PSO2 as pso
-from Evandro.interface import resultado as res
-from Evandro.interface import resultado_est as res_est
+from Interface.Evandro.auxiliar import PSO2 as pso
+from Interface.Evandro.interface import resultado as res
+from Interface.Evandro.interface import resultado_est as res_est
 
 sync_exp_list = []
 
