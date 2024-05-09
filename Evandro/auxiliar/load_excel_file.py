@@ -5,7 +5,7 @@ import numpy as np
 import scipy.stats as st
 import matplotlib.pyplot as plt
 from io import BytesIO
-from Interface.Evandro.interface import resultado_est
+from Evandro.interface import resultado_est
 from flet_core.matplotlib_chart import MatplotlibChart
 
 

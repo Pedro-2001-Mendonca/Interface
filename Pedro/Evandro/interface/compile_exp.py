@@ -1,8 +1,8 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
 import numpy as np
-from Interface.Evandro.auxiliar import load_excel_file as excel
-from Interface.Pedro.Evandro.db import db_experiment as db
+from Evandro.auxiliar import load_excel_file as excel
+from Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
 
 sync_exp_list = []

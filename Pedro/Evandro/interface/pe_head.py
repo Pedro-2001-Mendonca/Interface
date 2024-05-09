@@ -1,10 +1,10 @@
 import flet as ft
 from flet_core.matplotlib_chart import MatplotlibChart
 import numpy as np
-from Interface.Evandro.auxiliar import load_excel_file as excel
-from Interface.Evandro.db import db_experiment as db
+from Evandro.auxiliar import load_excel_file as excel
+from Evandro.db import db_experiment as db
 import matplotlib.pyplot as plt
-from Interface.Pedro.Evandro.interface import pe_body as pb
+from Evandro.interface import pe_body as pb
 
 input_height = 50
 input_cursor_height = 25

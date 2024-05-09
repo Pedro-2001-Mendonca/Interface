@@ -4,11 +4,11 @@ import pandas as pd
 import math
 import numpy as np
 from flet_core.matplotlib_chart import MatplotlibChart
-from Interface.Pedro.Evandro.auxiliar import load_excel_file as excel
+from Evandro.auxiliar import load_excel_file as excel
 
-from Interface.Pedro.Evandro.classes import experiment_class as ec
-from Interface.Pedro.Evandro.auxiliar import synchronization as sync
-from Interface.Pedro.Evandro.db import db_experiment as db
+from Evandro.classes import experiment_class as ec
+from Evandro.auxiliar import synchronization as sync
+from Evandro.db import db_experiment as db
 
 import matplotlib.pyplot as plt
 
@@ -85,18 +85,6 @@ input_column = ft.Column(controls=[container_leito, ft.Divider(thickness=0.5), c
                                    container_sync], spacing=7)
 input_container = ft.Container(content=input_column)
 
-inputs = []
-
-inputs.append(inputL_bed)
-inputs.append(inputD_bed)
-inputs.append(inputM_ads)
-inputs.append(inputPorosidade)
-inputs.append(inputT_in)
-inputs.append(inputQ_in)
-inputs.append(inputy_in)
-inputs.append(inputT_in)
-
-pross = True
 
 def main(page):
     principal = ft.Column(alignment=ft.MainAxisAlignment.START, scroll=ft.ScrollMode.ALWAYS, spacing=25)
@@ -108,7 +96,6 @@ def main(page):
         if e.files != None:
             for f in e.files:
                 arquivo = f.path
-            __validate_inputs_all__(inputs, page)
             cria_textfields(arquivo)
 
     seleciona_arquivo_dialog = ft.FilePicker(on_result=seleciona_arquivo)
@@ -123,202 +110,195 @@ def main(page):
     principal.controls.insert(2, ft.Column(controls=None))
 
     def cria_textfields(arquivo):
-        global pross
-        if pross:
-            vetorQ = []
-            vetorTempoQ = []
-            vetorT = []
-            vetorTempoT = []
-            vetory = []
-            vetorTempoy = []
 
-            while len(principal.controls) > 2:
+        vetorQ = []
+        vetorTempoQ = []
+        vetorT = []
+        vetorTempoT = []
+        vetory = []
+        vetorTempoy = []
 
-                principal.controls.remove(principal.controls[2])
+        while len(principal.controls) > 2:
 
-            excel = pd.read_excel(arquivo)
+            principal.controls.remove(principal.controls[2])
 
-            for index, row in excel.iterrows():
+        excel = pd.read_excel(arquivo)
 
-                for col, value in row.items():
-                    if col == 'tempoT' and value >= 0:
-                        vetorTempoT.append(value)
-                    elif col == 'T' and value >= 0:
-                        vetorT.append(value)
-                    elif col == 'tempoQ' and value >= 0:
-                        vetorTempoQ.append(value)
-                    elif col == 'Q' and value >= 0:
-                        vetorQ.append(value)
-                    elif col == 'tempoy' and value >= 0:
-                        vetorTempoy.append(value)
-                    elif col == 'y' and value >= 0:
-                        vetory.append(value)
+        for index, row in excel.iterrows():
 
+            for col, value in row.items():
+                if col == 'tempoT' and value >= 0:
+                    vetorTempoT.append(value)
+                elif col == 'T' and value >= 0:
+                    vetorT.append(value)
+                elif col == 'tempoQ' and value >= 0:
+                    vetorTempoQ.append(value)
+                elif col == 'Q' and value >= 0:
+                    vetorQ.append(value)
+                elif col == 'tempoy' and value >= 0:
+                    vetorTempoy.append(value)
+                elif col == 'y' and value >= 0:
+                    vetory.append(value)
 
+        not_synchronized_experiment = ec.NotSynchronizedExperiment(
+            "tab_name",
+            float(__return_input_value__(inputP_in.value)),
+            float(__return_input_value__(inputQ_in.value)),
+            float(__return_input_value__(inputT_in.value)),
+            float(__return_input_value__(inputy_in.value)),
+            float(__return_input_value__(inputM_ads.value)),
+            float(__return_input_value__(inputL_bed.value)),
+            float(__return_input_value__(inputD_bed.value)),
+            vetorTempoy,
+            vetorTempoT,
+            vetorTempoQ,
+            vetorT,
+            vetorQ,
+            vetory,
+            "K",
+            "bar",
+            "L/min",
+            float(__return_input_value__(inputPorosidade.value))
+        )
 
-            not_synchronized_experiment = ec.NotSynchronizedExperiment(
-                "tab_name",
-                float(inputP_in.value),
-                float(inputQ_in.value),
-                float(inputT_in.value),
-                float(inputy_in.value),
-                float(inputM_ads.value),
-                float(inputL_bed.value),
-                float(inputD_bed.value),
-                vetorTempoy,
-                vetorTempoT,
-                vetorTempoQ,
-                vetorT,
-                vetorQ,
-                vetory,
-                "K",
-                "bar",
-                "L/min",
-                inputPorosidade.value
-            )
+        vetorCol = ft.Column(controls=None, alignment=ft.MainAxisAlignment.CENTER)
+        vetorCol.controls.clear()
 
+        titulo_size = 15
+        vertical_up = -0.9
+        newheigth = 35
 
+        vetorCol.controls.append(ft.TextField("Dados não sincronizados", text_align=ft.TextAlign.START,
+                                              text_size=titulo_size,
+                                              width=250,
+                                              height=newheigth,
+                                              text_vertical_align=vertical_up,
+                                              content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                                              border=ft.InputBorder.NONE, read_only=True))
 
-            vetorCol = ft.Column(controls=None, alignment=ft.MainAxisAlignment.CENTER)
-            vetorCol.controls.clear()
+        vetorLinha = []
 
-            titulo_size = 15
-            vertical_up = -0.9
-            newheigth = 35
+        vetorLinha.append(ft.TextField("Tempo - Temp. (s)", text_align=ft.TextAlign.CENTER, text_size=titulo_size,
+                                       width=150,
+                                       height=newheigth,
+                                       text_vertical_align=vertical_up,
+                                       content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                                       border=ft.InputBorder.NONE, read_only=True))
+        vetorLinha.append(
+            ft.TextField("Temperatura (K)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
+                         height=newheigth,
+                         text_vertical_align=vertical_up, content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                         border=ft.InputBorder.NONE, read_only=True))
+        vetorLinha.append(
+            ft.TextField("Tempo - Vazão (s)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
+                         height=newheigth,
+                         text_vertical_align=vertical_up,
+                         content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                         border=ft.InputBorder.NONE, read_only=True))
+        vetorLinha.append(
+            ft.TextField("Vazão (L/s)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
+                         height=newheigth,
+                         text_vertical_align=vertical_up, content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                         border=ft.InputBorder.NONE, read_only=True))
+        vetorLinha.append(
+            ft.TextField("Tempo - F. Mol. (s)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
+                         height=newheigth,
+                         text_vertical_align=vertical_up,
+                         content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                         border=ft.InputBorder.NONE, read_only=True))
+        vetorLinha.append(ft.TextField("Fração Molar", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
+                                       height=newheigth,
+                                       text_vertical_align=-1,
+                                       content_padding=ft.padding.only(left=5, right=2, bottom=18),
+                                       border=ft.InputBorder.NONE, read_only=True))
+        vetorCol.controls.insert(1, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
+        # vetorCol_Export = []
 
-            vetorCol.controls.append(ft.TextField("Dados não sincronizados", text_align=ft.TextAlign.START,
-                                                  text_size=titulo_size,
-                                                  width=250,
-                                                  height=newheigth,
-                                                  text_vertical_align=vertical_up,
-                                                  content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                                                  border=ft.InputBorder.NONE, read_only=True))
-
+        for i in range(np.max([len(vetorTempoT), len(vetorTempoQ), len(vetorTempoy)])):
             vetorLinha = []
+            # vetorLinha_Export = []
 
-            vetorLinha.append(ft.TextField("Tempo - Temp. (s)", text_align=ft.TextAlign.CENTER, text_size=titulo_size,
-                                           width=150,
-                                           height=newheigth,
-                                           text_vertical_align=vertical_up,
-                                           content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                                           border=ft.InputBorder.NONE, read_only=True))
-            vetorLinha.append(
-                ft.TextField("Temperatura (K)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
-                             height=newheigth,
-                             text_vertical_align=vertical_up, content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                             border=ft.InputBorder.NONE, read_only=True))
-            vetorLinha.append(
-                ft.TextField("Tempo - Vazão (s)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
-                             height=newheigth,
-                             text_vertical_align=vertical_up,
-                             content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                             border=ft.InputBorder.NONE, read_only=True))
-            vetorLinha.append(
-                ft.TextField("Vazão (L/s)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
-                             height=newheigth,
-                             text_vertical_align=vertical_up, content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                             border=ft.InputBorder.NONE, read_only=True))
-            vetorLinha.append(
-                ft.TextField("Tempo - F. Mol. (s)", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
-                             height=newheigth,
-                             text_vertical_align=vertical_up,
-                             content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                             border=ft.InputBorder.NONE, read_only=True))
-            vetorLinha.append(ft.TextField("Fração Molar", text_align=ft.TextAlign.CENTER, width=150, text_size=titulo_size,
-                                           height=newheigth,
-                                           text_vertical_align=-1,
-                                           content_padding=ft.padding.only(left=5, right=2, bottom=18),
-                                           border=ft.InputBorder.NONE, read_only=True))
-            vetorCol.controls.insert(1, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
-            # vetorCol_Export = []
-
-            for i in range(np.max([len(vetorTempoT), len(vetorTempoQ), len(vetorTempoy)])):
-                vetorLinha = []
-                # vetorLinha_Export = []
-
-                if i < len(vetorTempoT):
-                    vetorLinha.append(ft.TextField(round(vetorTempoT[i], 5), text_align=ft.TextAlign.CENTER,
-                                                   width=150,
-                                                   height=newheigth,
-                                                   text_vertical_align=-0.73,
-                                                   content_padding=ft.padding.only(left=5, right=2)))
-                    vetorLinha.append(
-                        ft.TextField(round(vetorT[i], 5), text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-                else:
-                    vetorLinha.append(
-                        ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-                    vetorLinha.append(
-                        ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-                if i < len(vetorTempoQ):
-                    vetorLinha.append(ft.TextField(round(vetorTempoQ[i], 5), text_align=ft.TextAlign.CENTER,
-                                                   width=150,
-                                                   height=newheigth,
-                                                   text_vertical_align=-0.73,
-                                                   content_padding=ft.padding.only(left=5, right=2)))
-                    vetorLinha.append(
-                        ft.TextField(round(vetorQ[i], 5), text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-                else:
-                    vetorLinha.append(
-                        ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-                    vetorLinha.append(
-                        ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-
-                if i < len(vetorTempoy):
-                    vetorLinha.append(ft.TextField(round(vetorTempoy[i], 5), text_align=ft.TextAlign.CENTER,
-                                                   width=150,
-                                                   height=newheigth,
-                                                   text_vertical_align=-0.73,
-                                                   content_padding=ft.padding.only(left=5, right=2)))
-                    vetorLinha.append(
-                        ft.TextField(round(vetory[i], 5), text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-                else:
-                    vetorLinha.append(
-                        ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-                    vetorLinha.append(
-                        ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
-                                     height=newheigth,
-                                     text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
-
-                vetorCol.controls.insert(i + 2, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
-
-                while len(principal.controls) > 2:
-                    principal.controls.remove(principal.controls[2])
-
-                principal.controls.insert(2, vetorCol)
-
-                __update_sync__(not_synchronized_experiment)
-
-                sync_bt = ft.ElevatedButton("Sincronizar",
-                                            on_click=lambda _: __sincronizar_dados__(principal, not_synchronized_experiment,
-                                                                                     linha1, page), width=button_width)
-                while len(linha1.controls) > 1:
-                    linha1.controls.remove(linha1.controls[1])
-                linha1.controls.insert(1, sync_bt)
-
-                principal.update()
+            if i < len(vetorTempoT):
+                vetorLinha.append(ft.TextField(round(vetorTempoT[i], 5), text_align=ft.TextAlign.CENTER,
+                                               width=150,
+                                               height=newheigth,
+                                               text_vertical_align=-0.73,
+                                               content_padding=ft.padding.only(left=5, right=2)))
+                vetorLinha.append(
+                    ft.TextField(round(vetorT[i], 5), text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
             else:
-                pass
+                vetorLinha.append(
+                    ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+                vetorLinha.append(
+                    ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+            if i < len(vetorTempoQ):
+                vetorLinha.append(ft.TextField(round(vetorTempoQ[i], 5), text_align=ft.TextAlign.CENTER,
+                                               width=150,
+                                               height=newheigth,
+                                               text_vertical_align=-0.73,
+                                               content_padding=ft.padding.only(left=5, right=2)))
+                vetorLinha.append(
+                    ft.TextField(round(vetorQ[i], 5), text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+            else:
+                vetorLinha.append(
+                    ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+                vetorLinha.append(
+                    ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+
+            if i < len(vetorTempoy):
+                vetorLinha.append(ft.TextField(round(vetorTempoy[i], 5), text_align=ft.TextAlign.CENTER,
+                                               width=150,
+                                               height=newheigth,
+                                               text_vertical_align=-0.73,
+                                               content_padding=ft.padding.only(left=5, right=2)))
+                vetorLinha.append(
+                    ft.TextField(round(vetory[i], 5), text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+            else:
+                vetorLinha.append(
+                    ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+                vetorLinha.append(
+                    ft.TextField('-', text_align=ft.TextAlign.CENTER, width=150,
+                                 height=newheigth,
+                                 text_vertical_align=-0.73, content_padding=ft.padding.only(left=5, right=2)))
+
+            vetorCol.controls.insert(i + 2, ft.Row(vetorLinha, alignment=ft.MainAxisAlignment.START))
+
+        while len(principal.controls) > 2:
+            principal.controls.remove(principal.controls[2])
+
+        principal.controls.insert(2, vetorCol)
+
+        __update_sync__(not_synchronized_experiment)
+
+        sync_bt = ft.ElevatedButton("Sincronizar",
+                                    on_click=lambda _: __sincronizar_dados__(principal, not_synchronized_experiment,
+                                                                             linha1, page), width=button_width)
+        while len(linha1.controls) > 1:
+            linha1.controls.remove(linha1.controls[1])
+        linha1.controls.insert(1, sync_bt)
+
+        principal.update()
 
     page.overlay.append(seleciona_arquivo_dialog)
     page.update()
-
     return principal
+
 
 def __return_input_value__(input):
     if input != '':
@@ -327,101 +307,7 @@ def __return_input_value__(input):
         return 0
 
 
-def __validate_inputs_all__(vetor_inputs: [], page):
-    for i in range(len(vetor_inputs)):
-        __validate_input_value__(vetor_inputs[i].value, page)
-
-
-def __validate_input_value__(input, page):
-
-    def close_dlg(e):
-        dlg_modal.open = False
-        page.update()
-
-    def open_dlg(e):
-        page.dialog = dlg_modal
-        dlg_modal.open = True
-        page.update()
-
-    dlg_modal = ft.AlertDialog(
-        modal=True,
-        title=ft.Text("Erro!"),
-        actions=[
-            ft.TextButton("Ok", on_click=close_dlg)
-        ],
-        actions_alignment=ft.MainAxisAlignment.END,
-        on_dismiss=close_dlg
-    )
-
-    try:
-        float_input = float(input)
-        print(float_input)
-
-        if float_input < 0:
-            global pross
-            pross = False
-            if float_input == inputL_bed.value:
-                dlg_modal.content = ft.Text("O valor inserido para o comprimento não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-            elif float_input == inputP_in.value:
-                dlg_modal.content = ft.Text("O valor inserido para a pressão não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-            elif float_input == inputD_bed.value:
-                dlg_modal.content = ft.Text("O valor inserido para o diâmetro não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-            elif float_input == inputM_ads.value:
-                dlg_modal.content = ft.Text("O valor inserido para a massa do adsorvente não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-            elif float_input == inputPorosidade.value:
-                dlg_modal.content = ft.Text("O valor inserido para a porosidade não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-            elif float_input == inputQ_in.value:
-                dlg_modal.content = ft.Text("O valor inserido para o Qin não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-            elif float_input == inputT_in.value:
-                dlg_modal.content = ft.Text("O valor inserido para a temperatura não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-            elif float_input == inputy_in.value:
-                dlg_modal.content = ft.Text("O valor inserido para o Yin não deve ser negativo!")
-                open_dlg(e=dlg_modal)
-                return input
-
-    except ValueError:
-        pross = False
-        if input == inputL_bed.value:
-            dlg_modal.content = ft.Text("O valor inserido para o comprimento é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-        elif input == inputP_in.value:
-            dlg_modal.content = ft.Text("O valor inserido para a pressão é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-        elif input == inputD_bed.value:
-            dlg_modal.content = ft.Text("O valor inserido para o diâmetro é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-        elif input == inputM_ads.value:
-            dlg_modal.content = ft.Text("O valor inserido para a massa do adsorvente é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-        elif input == inputPorosidade.value:
-            dlg_modal.content = ft.Text("O valor inserido para a porosidade é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-        elif input == inputQ_in.value:
-            dlg_modal.content = ft.Text("O valor inserido para o Qin é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-        elif input == inputT_in.value:
-            dlg_modal.content = ft.Text("O valor inserido para a temperatura é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-        elif input == inputy_in.value:
-            dlg_modal.content = ft.Text("O valor inserido para o Yin é inválido! Por favor insira um valor numérico")
-            open_dlg(e=dlg_modal)
-
 def __sincronizar_dados__(
-
         principal,
         ns_exp, linha1, page):
     principal.update()
@@ -569,7 +455,7 @@ def __sincronizar_dados__(
     def export_file_result(e: ft.FilePickerResultEvent):
         save_file_path = e.path if e.path else None
         if save_file_path:
-            __update_sync__(sync_experiment, pross)
+            __update_sync__(sync_experiment)
             excel.__export__(save_file_path, sync_experiment)
 
     export_file_dialog = ft.FilePicker(on_result=export_file_result)
@@ -595,18 +481,14 @@ def __sincronizar_dados__(
 
 
 def __update_sync__(sync_exp):
-    global pross
-    if pross:
-        sync_exp.inlet_pressure = float(__return_input_value__(inputP_in.value))
-        sync_exp.inlet_flow = float(__return_input_value__(inputQ_in.value))
-        sync_exp.inlet_temperature = float(__return_input_value__(inputT_in.value))
-        sync_exp.inlet_y = float(__return_input_value__(inputy_in.value))
-        sync_exp.adsorbent_mass = float(__return_input_value__(inputM_ads.value))
-        sync_exp.bed_length = float(__return_input_value__(inputL_bed.value))
-        sync_exp.bed_diameter = float(__return_input_value__(inputD_bed.value))
-        sync_exp.porosity = float(__return_input_value__(inputPorosidade.value))
-        sync_exp.initial_t = float(__return_input_value__(input_sync_t_init.value))
-        sync_exp.final_t = float(__return_input_value__(input_sync_t.value))
-        sync_exp.n_partitions = float(__return_input_value__(input_sync_int.value))
-    else:
-        return
+    sync_exp.inlet_pressure = float(__return_input_value__(inputP_in.value))
+    sync_exp.inlet_flow = float(__return_input_value__(inputQ_in.value))
+    sync_exp.inlet_temperature = float(__return_input_value__(inputT_in.value))
+    sync_exp.inlet_y = float(__return_input_value__(inputy_in.value))
+    sync_exp.adsorbent_mass = float(__return_input_value__(inputM_ads.value))
+    sync_exp.bed_length = float(__return_input_value__(inputL_bed.value))
+    sync_exp.bed_diameter = float(__return_input_value__(inputD_bed.value))
+    sync_exp.porosity = float(__return_input_value__(inputPorosidade.value))
+    sync_exp.initial_t = float(__return_input_value__(input_sync_t_init.value))
+    sync_exp.final_t = float(__return_input_value__(input_sync_t.value))
+    sync_exp.n_partitions = float(__return_input_value__(input_sync_int.value))

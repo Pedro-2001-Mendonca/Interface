@@ -1,8 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
 import flet as ft
-from Interface.Pedro.Evandro.interface import Tabs as tbs
-from Interface.Pedro.Evandro.interface import pe_head as pe
-from Interface.Pedro.Evandro.interface import compile_exp as cp
+from Evandro.interface import Tabs as tbs
+from interface import pe_head as pe
+from interface import compile_exp as cp
 import matplotlib
 import warnings
 
@@ -12,7 +12,7 @@ matplotlib.use("svg")
 
 off_sync = True
 
-print("Testando PUSH")
+
 def __change_page__(index, linha_principal, page):
     if index == 0:
         page.overlay.clear()
